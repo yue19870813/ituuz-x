@@ -8,6 +8,13 @@ ituuz-x is a typescript game develop tool kit. Apply to developing game with coc
 
 ------------
 
-# 
+# Planned
+1. xxx
+2. xxx
+
+------------
+
+# How to use in your project
+include
 
 
