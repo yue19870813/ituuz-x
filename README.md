@@ -3,7 +3,11 @@
 ituuz-x
 =========
 
+# Description
+ituuz-x is a typescript game develop tool kit. Apply to developing game with cocos creator, egret and so on.
 
-# ituuz-x
-- 1
-- 2
+------------
+
+# 
+
+
