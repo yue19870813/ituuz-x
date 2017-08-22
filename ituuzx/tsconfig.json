@@ -1,15 +1,12 @@
 {
-   "compilerOptions": {
-      "target": "es5",
-      "outDir": "bin-debug",
-      "experimentalDecorators": true,
-      "lib": [
-          "es5",
-          "dom",
-          "es2015.promise"
-      ]
-   },
-   "exclude": [
-      "node_modules"
-   ]
+    "compilerOptions": {
+        "module": "system",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outFile": "../built/ituuzx/itz.js"
+    },
+    "include": [
+        "**/*.ts"
+    ]
 }
