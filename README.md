@@ -4,7 +4,7 @@ ituuz-x
 =========
 
 # Description
-ituuz-x is a typescript game develop tool kit. Apply to developing game with cocos creator, egret and so on.
+ituuz-x is a typescript game development tool kit. Apply to developing game with cocos creator, egret and so on.
 
 ------------
 
@@ -13,23 +13,26 @@ ituuz-x is a typescript game develop tool kit. Apply to developing game with coc
 	- core
 		- base
 			- model
+			- mediator
 			- exception
 			- notify
-			- log
-		- util
-			- map
-			- queue
-			- stack
 		- ext
+			- log
 			- http
-			- 
-		
-	- 
-- xxx
+	- util
+		- map
+		- queue
+		- stack 
+- extensions
+	- websocke
+	- http
+	- pathfind
+	- ai
 
 ------------
 
 # How to use in your project
-include
-
+- egret
+- cocos2d-js
+- cocos creator
 
