@@ -4,7 +4,7 @@
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "outFile": "../built/ituuzx/itz.js"
+        "outFile": "built/itz.js"
     },
     "include": [
         "**/*.ts"
