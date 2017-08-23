@@ -11,17 +11,17 @@ ituuz-x is a typescript game development tool kit. Apply to developing game with
 # Planned
 - ituuzx
 	- base
-		- model
+		- model(release)
 		- mediator
-		- error
-		- notify
+		- error(release)
+		- notify(release)
 	- ext
 		- log
 		- http
 	- util
-		- map
-		- queue
-		- stack 
+		- map(release)
+		- [ ] queue
+		- [x] stack 
 - extensions
 	- websocke
 	- http
