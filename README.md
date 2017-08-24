@@ -2,7 +2,7 @@
 
 ituuz-x
 ============
-[TOC]
+
 # Description
 ituuz-x is a typescript game development tool kit. Apply to developing game with cocos creator, egret and so on.
 
@@ -29,6 +29,7 @@ ituuz-x is a typescript game development tool kit. Apply to developing game with
 	- [ ] pathfind
 	- [ ] ai
 
+Roadmap:![roadmap](https://trello.com/b/r7EJRdEd/ituuz-x-roadmap)
 ------------
 
 # How to use in your project
