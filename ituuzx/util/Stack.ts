@@ -1,12 +1,12 @@
 /// <reference path="./../base/IDestory.ts" />
 namespace itz {
     /**
-     * Queue
+     * Stack
      * @author ituuz
      * @since 2017.08.24
      * Notice:It's not fit for find in big data, because it's use Array implementation. Need algorithm to optimize.
      */
-    export class Queue<T> {
+    export class Stack<T> {
         private _elements:Array<T> = null;
 
 		public constructor() {
@@ -18,17 +18,10 @@ namespace itz {
         }
 
         public pop():T {
-            return this._elements.shift();
+            return this._elements.pop();
         }
 
-        public front():T {
-            if (this._elements.length > 0) {
-                return this._elements[0];
-            }
-            return null;
-        }
-
-        public back() {
+        public top():T {
             if (this._elements.length > 0) {
                 return this._elements[this._elements.length - 1];
             }
