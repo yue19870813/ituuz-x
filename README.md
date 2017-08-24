@@ -11,29 +11,31 @@ ituuz-x is a typescript game development tool kit. Apply to developing game with
 # Planned
 - ituuzx
 	- base
-		- [x] model
-		- [ ] mediator
+		- [x] model: Model of MVC, hold the data and as a data driver.
+		- [ ] mediator: Mediator of MVC, hold the model and view.
 		- [ ] commond
-		- [x] error
-		- [x] notify
+		- [x] error: The coustom excetpion.
+		- [x] notify: Send and subscrib message.
 	- ext
-		- [ ] log
-		- [ ] http
+		- [ ] log: Print log tools.
+		- [ ] http: Http tools.
 	- util
 		- [x] map
 		- [ ] queue
 		- [ ] stack 
 - extensions
-	- [ ] websocke 
-	- [ ] http
+	- [ ] websocke: 
+	- [ ] protobuf
 	- [ ] pathfind
-	- [ ] ai
+		- [ ] AStar
+	- [ ] AI
+		- [ ] Behavior Tree
+		- [ ] neuralnet
 
-* Roadmap:[https://trello.com/b/r7EJRdEd/ituuz-x-roadmap](https://trello.com/b/r7EJRdEd/ituuz-x-roadmap)
+- Roadmap:[https://trello.com/b/r7EJRdEd/ituuz-x-roadmap](https://trello.com/b/r7EJRdEd/ituuz-x-roadmap)
 ------------
 
 # How to use in your project
-- egret
-- cocos2d-js
-- cocos creator
+- Egret
+- Cocos Creator
 
