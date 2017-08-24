@@ -2,7 +2,7 @@
 
 ituuz-x
 ============
-
+[TOC]
 # Description
 ituuz-x is a typescript game development tool kit. Apply to developing game with cocos creator, egret and so on.
 
@@ -13,6 +13,7 @@ ituuz-x is a typescript game development tool kit. Apply to developing game with
 	- base
 		- [x] model
 		- [ ] mediator
+		- [ ] commond
 		- [x] error
 		- [x] notify
 	- ext
