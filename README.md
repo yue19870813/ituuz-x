@@ -39,3 +39,7 @@ ituuz-x is a typescript game development tool kit. Apply to developing game with
 - Egret
 - Cocos Creator
 
+# The command line support
+- Command detail : [README.md](https://github.com/yue19870813/ituuz-x/blob/master/tools/README.md)
+
+
