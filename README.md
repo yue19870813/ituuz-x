@@ -36,8 +36,8 @@ ituuz-x is a typescript game development tool kit. Apply to developing game with
 ------------
 
 # How to use in your project
-- Egret
-- Cocos Creator
+- Egret : Run tools/itz.py to get the itz.js in ituuzx\built. Then please refer to the Egret doc [How to use the third party in Egret](http://developer.egret.com/cn/github/egret-docs/extension/threes/instructions/index.html)
+- Cocos Creator : 
 
 # The command line support
 - Command detail : [README.md](https://github.com/yue19870813/ituuz-x/blob/master/tools/README.md)
