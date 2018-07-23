@@ -13,28 +13,37 @@ namespace itz {
         public static log(obj:any, ...subst:any[]) {
             if (Controller.getInstance().getLogType() == LoggerType.LOG
                 || Controller.getInstance().getLogType() == LoggerType.ALL) {
-                console.log("[Dee log]：" + obj, ...subst);
+                console.log("[" + Controller.getInstance().getLogName() + " log]：" + obj, ...subst);
             }
         }
 
         public static warn(obj:any, ...subst:any[]) {
             if (Controller.getInstance().getLogType() == LoggerType.WARN
                 || Controller.getInstance().getLogType() == LoggerType.ALL) {
-                console.warn("[Dee log]：" + obj, ...subst);
+                console.warn("[" + Controller.getInstance().getLogName() + " log]：" + obj, ...subst);
             }
         }
 
         public static info(obj:any, ...subst:any[]) {
             if (Controller.getInstance().getLogType() == LoggerType.INFO
                 || Controller.getInstance().getLogType() == LoggerType.ALL) {
-                console.info("[Dee log]：" + obj, ...subst);
+                console.info("[" + Controller.getInstance().getLogName() + " log]：" + obj, ...subst);
             }
         }
 
         public static error(obj:any, ...subst:any[]) {
             if (Controller.getInstance().getLogType() == LoggerType.ERROR
                 || Controller.getInstance().getLogType() == LoggerType.ALL) {
-                console.error("[Dee log]：" + obj, ...subst);
+                console.error("[" + Controller.getInstance().getLogName() + " log]：" + obj, ...subst);
+            }
+        }
+
+        /**
+         * this is used by framework
+         */
+        public static flog(obj:any, ...subst:any[]) {
+            if (Controller.getInstance().getDebug()) {
+                console.log("[framework log]:" + obj, ...subst);
             }
         }
     }
