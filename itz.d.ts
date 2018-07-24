@@ -92,10 +92,84 @@ declare namespace itz {
          */
 		dispose():void;
 	}
-	/**
-     * Global notification send and subscrib tools.
-     */
-	class Notification {
-		static _callbackList:Map<number, Array<any>>;
+	class Logger {
+		static log(obj:any, ...subst:any[]);
+		static warn(obj:any, ...subst:any[]);
+		static info(obj:any, ...subst:any[]);
+		static error(obj:any, ...subst:any[]);
 	}
+	/** logger type */
+	export enum LoggerType {
+        NONE,
+        ALL,
+        INFO,
+        LOG,
+        WARN,
+        ERROR
+	}
+	/**
+	 * framework controller
+	 */
+	class Controller {
+		/** get the controller instance */
+		static getInstance():Controller;
+		/** init some framework config */
+		init(debug:boolean, logType:LoggerType);
+	}
+	/** the facada of framework, many common API in it. */
+	class Facade {
+		/**
+         * Notification subscrib 
+         * @param type notification ID 
+         * @param callback callback
+         * @param target target
+         */
+		static registNotify(type:number, callback:Function, target:any):void;
+		/**
+         * Notification unsubscrib
+         * @param type notification ID 
+         * @param callback callback
+         * @return {boolean} is unsubscrib success
+         */
+		static unregistNotify(type:number, callback:Function, target:any):boolean;
+		/**
+         * Remove notification by type
+         * @param type notification type
+         * @return {boolean} is remove success
+         */
+		static removebyNotifyByType(type:number):boolean;
+		/**
+         * remove all notification registed
+         */
+		static removeAllNotify():void;
+		/**
+         * To judge whether this type of notification is registed
+         * @param {number}type notification type
+         * @return {boolean}
+         */
+		static hasNotifyType(type:number):boolean;
+		/**
+         * send notify
+         * @param {number}type notification ID 
+         * @param {Object}obj notification object
+         */
+		static sendNotify(type:number, obj:any):void;
+		/**
+		 * regist model
+		 * @param {any}clazz model key
+		 * @param {ModelBase}model ModelBase instance 
+		 */
+		static registModel(clazz:any, model:ModelBase):void;
+		/**
+		 * remove model's regist
+		 * @param {any}clazz model key
+		 * @return {boolean} is removed
+		 */
+		static unregistModel(clazz:any):boolean;
+		/**
+		 * remove all model and destory them.
+		 */
+		static removeAllModel():void;
+	}
+	
 }

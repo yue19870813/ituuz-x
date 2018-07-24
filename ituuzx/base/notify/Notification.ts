@@ -9,7 +9,7 @@ namespace itz {
 
         private static _callbackList:Map<number, Array<any>> = new Map();
 
-        public constructor() {
+        private constructor() {
             throw (new SimpleError("The itz.Notification can't call constructor!"));
         }
 

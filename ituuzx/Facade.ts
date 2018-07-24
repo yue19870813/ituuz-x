@@ -92,7 +92,28 @@ namespace itz {
 		 * @return {boolean} is removed
 		 */
 		public static unregistModel(clazz:any):boolean {
-			return this._modelList.remove(clazz);
+			let model = this._modelList.get(clazz)
+			if (model) {
+				model.dispose();
+				this._modelList.remove(clazz);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * remove all model and destory them.
+		 */
+		public static removeAllModel():void {
+			let modelList = this._modelList.getList();
+			while (modelList.length > 0) {
+				let obj = modelList.shift();
+				if (obj) {
+					let model = obj.value as ModelBase;
+					model.dispose();
+				}
+			}
 		}
 	}
 }
