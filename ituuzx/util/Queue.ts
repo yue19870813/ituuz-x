@@ -28,7 +28,7 @@ namespace itz {
             return null;
         }
 
-        public back() {
+        public back():T {
             if (this._elements.length > 0) {
                 return this._elements[this._elements.length - 1];
             }
