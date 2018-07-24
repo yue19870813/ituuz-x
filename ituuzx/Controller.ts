@@ -9,7 +9,7 @@ namespace itz {
         /** log type, please see the LoggerType enum in Logger.ts */
         private _logType:LoggerType;
         /** log name, it will be print in the log. */
-        private _logName:string;
+        private _logName:string = "itz";
 
         private constructor() {
 
@@ -22,9 +22,16 @@ namespace itz {
             return this._instance;
         }
 
-        public init(debug:boolean = false, logType:LoggerType = LoggerType.ALL) {
+        public init(debug:boolean = false, appName?:string, logType?:LoggerType) {
             this._debug = debug;
-            this._logType = logType;
+            if (appName) {
+                this._logName = appName;
+            } 
+            if (logType) {
+                this._logType = logType;
+            } else {
+                this._logType = LoggerType.ALL;
+            }
         }
 
         public getLogType():LoggerType {
@@ -33,10 +40,6 @@ namespace itz {
 
         public getDebug():boolean {
             return this._debug;
-        }
-
-        public setLogName(name:string = "ituuz") {
-            this._logName = name;
         }
 
         public getLogName():string {

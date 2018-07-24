@@ -114,7 +114,7 @@ declare namespace itz {
 		/** get the controller instance */
 		static getInstance():Controller;
 		/** init some framework config */
-		init(debug:boolean, logType:LoggerType);
+		init(debug:boolean, appName?:string, logType?:LoggerType);
 	}
 	/** the facada of framework, many common API in it. */
 	class Facade {
