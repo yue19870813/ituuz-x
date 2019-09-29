@@ -1,0 +1,12 @@
+{
+    "files": [
+        "framework/core/mvc/base/BaseCommand.ts"
+    ],
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "target": "es2015",
+        "allowJs": true,
+        "skipLibCheck": true,
+        "sourceMap": true
+    }
+}
