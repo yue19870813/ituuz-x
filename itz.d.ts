@@ -1,175 +1,103 @@
-/**
- * we often used utils
- */
-declare namespace itz {
-	/**
-     * Notice:It's not fit for find in big data, because it's use Array implementation. Need algorithm to optimize.
-     */
-	class Map<K, V> {
-		constructor();
-		put(_key:K, _value:V):void;
-		get(_key:K):V;
-		remove(_key:K):boolean;
-		contains(_key:K):boolean;
-		getList():Array<any>;
-		size():number;
-		isEmpty():boolean;
-		clear():void;
-	}
-	/**
-     * Queue
-     * Notice:It's not fit for find in big data, because it's use Array implementation. Need algorithm to optimize.
-     */
-	class Queue<T> {
-		constructor();
-		push(ele:T):void;
-		pop():T;
-		front():T;
-		back():T;
-		size():number;
-		isEmpty():boolean;
-		clear():void;
-	}
-	/**
-     * Stack
-     * Notice:It's not fit for find in big data, because it's use Array implementation. Need algorithm to optimize.
-     */
-	class Stack<T> {
-		constructor();
-		push(ele:T):void;
-		pop():T;
-		top():T;
-		size():number;
-		isEmpty():boolean;
-		clear():void;
-	}
-}
-/** 
- * The main namespace of the framework, all core classes, functions, properties and constants are defined in the namespace.
- */
-declare namespace itz {	
-	/** ituuz-x version */
-	export var ITZ_VERSION:string;
+declare namespace it {
 
-	/** the destory interface */
-	interface IDestory {
-		dispose():void;
-	}
-	/** all error's base */
-	class ErrorBase implements IDestory {
-		/** the name of error */
-		name:string;
-		constructor(msg:string);
-		dispose():void;
-	}
-	/** simple error */
-	class SimpleError extends ErrorBase {
-		/** the name of simple error */
-		name:string;
-		constructor(msg:string);
-	}
-	/** all the model are extends ModelBase */
-	class ModelBase implements IDestory {
-		constructor();
-	    /**
-         * The initialize function, it will be call init function when subclass overwrite the init function.
-         * It's used to initialize some data or add listener after constructor.
+    export class MVC_struct {
+
+    }
+
+    export class BaseModel {
+        
+    }
+
+    
+    export class Framework {
+        /**
+         * 初始化框架接口
+         * @param {MVC_struct} scene 初始化游戏的第一个场景
+         * @param {boolean} debug 框架是否是调试模式
+         * @param {cc.Size} designResolution 默认的设计分辨率
+         * @param {boolean} fitWidth 是否宽适配
+         * @param {boolean} fitHeight 是否高适配
          */
-		init():void;
-		/**
-         * Send notification
-         * @param type notification type 
-         * @param obj notification value
+        static start(
+            scene: MVC_struct,
+            models: {new (): BaseModel}[],
+            debug?: boolean, 
+            designResolution?: cc.Size, 
+            fitWidth?: boolean, 
+            fitHeight?: boolean
+        ): void;
+    }
+
+    // LogUtil 日志相关
+    export function log(msg: any, ...subst: any[]): void;	
+    export function warn(msg: any, ...subst: any[]): void;	
+    export function debug(msg: any, ...subst: any[]): void;
+    export function error(msg: any, ...subst: any[]): void;	
+    /** 保存日志信息到本地文件 */
+    export function saveLog(): void;
+    
+    /**
+     * 自定义的加载接口，内部封装了各种加载器，加载资源统一调用该接口，
+     * 内部对资源引用进行了处理，方便后续的资源内存优化及释放。
+     */
+    namespace loader {
+        /**
+         * 加载资源
+         * @param {string} path 资源路径
+         * @param {cc.Asset} type 资源类型
+         * @param {(err, res) => void} callback 加载完成回调
          */
-		send(type:number, obj:any):void;
-		/**
-		 * clear something
-		 */
-		clear():void;
-		/**
-         * Subclass must be override destory!
-         * @throws when subclass not overwrite the function.
+        export function loadRes(path: string, type: typeof cc.Asset, callback: (err, res) => void): void;
+    }
+
+    /** 静态数据加载及管理 */
+    export class ConfigManager {
+        /** 获取ConfigManager单例对象 */
+        static getInstance(): ConfigManager;
+        /**
+         * 根据配置列表加载静态数据
+         * @param {string[]} configList 配置列表，需要加载的类名。
+         * @param {(count: number) => void} progressCallback 加载进度回调
+         * @param {() => void} finishedCallback 加载完成回调
          */
-		dispose():void;
-	}
-	class Logger {
-		static log(obj:any, ...subst:any[]);
-		static warn(obj:any, ...subst:any[]);
-		static info(obj:any, ...subst:any[]);
-		static error(obj:any, ...subst:any[]);
-	}
-	/** logger type */
-	export enum LoggerType {
-        NONE,
-        ALL,
-        INFO,
-        LOG,
-        WARN,
-        ERROR
-	}
-	/**
-	 * framework controller
-	 */
-	class Controller {
-		/** get the controller instance */
-		static getInstance():Controller;
-		/** init some framework config */
-		init(debug:boolean, appName?:string, logType?:LoggerType);
-	}
-	/** the facada of framework, many common API in it. */
-	class Facade {
-		/**
-         * Notification subscrib 
-         * @param type notification ID 
-         * @param callback callback
-         * @param target target
+        public loadConfList(configList: string[], progressCallback: (count: number) => void, finishedCallback: () => void): void;
+        /**
+         * 加载一个配置
+         * @param {string} name 配置名称，需要加载的类名。
+         * @param {() => void} finishedCallback 加载完成回调 
          */
-		static registNotify(type:number, callback:Function, target:any):void;
-		/**
-         * Notification unsubscrib
-         * @param type notification ID 
-         * @param callback callback
-         * @return {boolean} is unsubscrib success
+        public loadConfig(name: string, finishedCallback: () => void): void;
+        /**
+         * 释放指定配置
+         * @param {string} name 配置名称，需要释放的类名。 
          */
-		static unregistNotify(type:number, callback:Function, target:any):boolean;
-		/**
-         * Remove notification by type
-         * @param type notification type
-         * @return {boolean} is remove success
+        public releaseConfig(name: string): void;
+    }
+
+    /** UI相关工具类 */
+    export class UIUtils {
+        /**
+         * 返回当前节点所有节点,一唯一标识存在
+         * @param node 父节点
+         * @return {UIContainer} 所有子节点的映射map
          */
-		static removebyNotifyByType(type:number):boolean;
-		/**
-         * remove all notification registed
+        public seekAllSubView(node: cc.Node): UIContainer;
+    }
+
+    export class UIContainer {
+        /**
+         * 根据节点名字获取节点
+         * @param {string}name 节点名字
+         * @return {cc.Node}
          */
-		static removeAllNotify():void;
-		/**
-         * To judge whether this type of notification is registed
-         * @param {number}type notification type
-         * @return {boolean}
+        public getNode(name: string): cc.Node;
+
+        /**
+         * 根据节点名字和组件类型获取组件对象
+         * @param {string}name 节点名字
+         * @param {{prototype: cc.Component}}com 组建类型
+         * @return {cc.Component}
          */
-		static hasNotifyType(type:number):boolean;
-		/**
-         * send notify
-         * @param {number}type notification ID 
-         * @param {Object}obj notification object
-         */
-		static sendNotify(type:number, obj:any):void;
-		/**
-		 * regist model
-		 * @param {any}clazz model key
-		 * @param {ModelBase}model ModelBase instance 
-		 */
-		static registModel(clazz:any, model:ModelBase):void;
-		/**
-		 * remove model's regist
-		 * @param {any}clazz model key
-		 * @return {boolean} is removed
-		 */
-		static unregistModel(clazz:any):boolean;
-		/**
-		 * remove all model and destory them.
-		 */
-		static removeAllModel():void;
-	}
-	
+        public getComponent<T extends cc.Component>(name: string, com: { prototype: T }): T;
+    }
 }

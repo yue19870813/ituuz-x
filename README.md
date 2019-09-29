@@ -9,30 +9,28 @@ ituuz-x is a typescript game development tool kit. Apply to developing game with
 ------------
 
 # Planned
-- ituuzx
-	- base
-		- [x] model : Model of MVC, hold the data and as a data driver.
-		- [ ] mediator : Mediator of MVC, hold the model and view.
-		- [ ] commond
-		- [x] error : The coustom excetpion.
-		- [x] notify : Send and subscrib message.
-	- ext
-		- [x] log : Print log tools.
-		- [ ] http : Http tools.
-	- util
-		- [x] map
-		- [x] queue
-		- [x] stack 
-- extensions
-	- [ ] websocke: 
-	- [ ] protobuf
-	- [ ] pathfind
-		- [ ] AStar
-	- [ ] AI
-		- [ ] Behavior Tree
-		- [ ] neuralnet
+- FINISHED
+	- lightMVC基础框架
+    - lightMVC拓展内容lightMVC_ex
+    - loader模块及图集资源加载框架基础支持
+    - 静态数据模块
+    - 日志模块
+- TODO 
+	- 高性能ListView
+    - 动态本地化支持(文本和图片)
+- NEXT
+    - framework工作流（build && culling）
+    - 网络数据层模块（websocket && http && local）
+    - 资源自动加载释放
+- BACKUP
+	- 性能分析支持
+    - 自动化测试支持
+    - 异常捕获 
+    - 新手引导框架
+    - 状态机
+    - 行为树
+    - 寻路
 
-- Roadmap detail : [https://trello.com/b/r7EJRdEd/ituuz-x-roadmap](https://trello.com/b/r7EJRdEd/ituuz-x-roadmap)
 ------------
 
 # How to use in your project
