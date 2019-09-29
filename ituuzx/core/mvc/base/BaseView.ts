@@ -5,6 +5,7 @@
 import ViewEvent from "./ViewEvent";
 import {ViewManager} from "../manager/ViewManager";
 import UIUtils, { UIContainer } from "../../util/UIUtils";
+import BaseMediator from "./BaseMediator";
 
 const {ccclass, property} = cc._decorator;
 
@@ -45,7 +46,7 @@ export class BaseView extends cc.Component {
      * @param {BaseMediator} target 事件回调绑定对象
      * @private 私有函数，不得调用。
      */
-    public __bindEvent__(name: string, cb: (body: any)=>void, target): void {
+    public __bindEvent__(name: string, cb: (body: any)=>void, target: BaseMediator): void {
         this.__event__.on(name, cb, target);
     }
 

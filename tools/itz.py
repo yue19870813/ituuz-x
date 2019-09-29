@@ -11,7 +11,7 @@ import shutil
 os.system("tsc -p ../ituuzx/tsconfig.json")
 
 # copy itz.d.ts to project
-shutil.copy2('./../itz.d.ts', './../../Slidey/itz.d.ts')
+# shutil.copy2('./../itz.d.ts', './../../Slidey/itz.d.ts')
 
 
 # OVER
