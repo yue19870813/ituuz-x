@@ -1,6 +1,6 @@
 <img src="http://ww1.sinaimg.cn/large/0060lm7Tgy1finqq0pk5lj303k03kjr9.jpg">  
 
-[http://lightmvc.ituuz.com/](http://lightmvc.ituuz.com/)
+[http://ituuz-x.ituuz.com/](http://ituuz-x.ituuz.com/)
 
 ituuz-x
 ============
