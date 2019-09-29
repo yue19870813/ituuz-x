@@ -1,10 +1,12 @@
 <img src="http://ww1.sinaimg.cn/large/0060lm7Tgy1finqq0pk5lj303k03kjr9.jpg">  
 
+[http://lightmvc.ituuz.com/](http://lightmvc.ituuz.com/)
+
 ituuz-x
 ============
 
 # Description
-ituuz-x is a typescript game development tool kit. Apply to developing game with cocos creator, egret and so on.
+ituuz-x是一个cocos creator游戏开发一个集成框架，也是一个工具集。其包括常用用的项目管理的mvc架构，以及静态数据、本地化、资源管理、网络等模块，后续还会不断拓展新的模块或工具，除核心`core`是必须引用外，其他模块都可以根据需求选择引用，后续会增加模块剔除配置功能。框架后续功能可以参考下面的Planned计划表。
 
 ------------
 
@@ -34,8 +36,7 @@ ituuz-x is a typescript game development tool kit. Apply to developing game with
 ------------
 
 # How to use in your project
-- Egret : Run tools/itz.py to get the itz.js in ituuzx\built. Then please refer to the Egret doc [How to use the third party in Egret](http://developer.egret.com/cn/github/egret-docs/extension/threes/instructions/index.html)
-- Cocos Creator : 
+- Cocos Creator : todo
 
 # The command line support
 - Command detail : [README.md](https://github.com/yue19870813/ituuz-x/blob/master/tools/README.md)
