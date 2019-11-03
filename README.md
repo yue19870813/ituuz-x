@@ -17,12 +17,12 @@ ituuz-x是一个cocos creator游戏开发一个集成框架，也是一个工具
     - loader模块及图集资源加载框架基础支持
     - 静态数据模块
     - 日志模块
+    - 寻路
+    - 网络数据层模块(http)
 - TODO 
-	- 高性能ListView
-    - 动态本地化支持(文本和图片)
+    - 网络数据层模块（websocket && local）
 - NEXT
     - framework工作流（build && culling）
-    - 网络数据层模块（websocket && http && local）
     - 资源自动加载释放
 - BACKUP
 	- 性能分析支持
@@ -31,7 +31,7 @@ ituuz-x是一个cocos creator游戏开发一个集成框架，也是一个工具
     - 新手引导框架
     - 状态机
     - 行为树
-    - 寻路
+    - 动态本地化支持
 
 ------------
 
