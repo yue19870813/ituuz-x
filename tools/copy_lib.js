@@ -85,12 +85,12 @@ function deleteFolderRecursive(path) {
     }
 };
 
-
 // 将copy接口导出
 exports.copyDirs = copyDir;
 exports.deleteDirs = deleteFolderRecursive;
 
-let PROJECT_PATH = "/Users/yue/private/BH/client/BH/assets/Lib";
+// let PROJECT_PATH = "/Users/yue/private/BH/client/BH/assets/Lib";
+let PROJECT_PATH = "/Users/yue/private/ituuz-x/samples/LightmvcDemo/assets/libs";
 
 // delete
 deleteFolderRecursive(PROJECT_PATH + "/core/");
