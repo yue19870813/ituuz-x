@@ -1,3 +1,5 @@
+import { BaseView } from "../mvc/base/BaseView";
+
 /**
  * UIUtils:解析UI节点工具类
  * @author ituuz
@@ -37,8 +39,14 @@ export class UIContainer {
     /** 所有节点集合 */
     private _uiNodesMap: Map<string, cc.Node>;
 
+    private _target: BaseView;
+
     public constructor(nodesMap: Map<string, cc.Node>) {
         this._uiNodesMap = nodesMap;
+    }
+
+    public setTarget(t: BaseView): void {
+        this._target = t;
     }
 
     /**
@@ -63,8 +71,29 @@ export class UIContainer {
         }
         return null;
     }
+
+    /**
+     * 发送点击事件
+     * @param {cc.Node | string} node 事件节点
+     * @param {string} event 事件名称
+     * @param {any} param 事件参数（可选）
+     */
+    public addClickEvent(node: cc.Node | string, event: string, param?: any, target?: any): void {
+        if (node) {
+            let tempNode: cc.Node = null;
+            if (typeof node === "string") {
+                tempNode = this.getNode(node);
+            } else {
+                tempNode = node;
+            }
+            tempNode.on(cc.Node.EventType.TOUCH_END, () => {
+                this._target.sendEvent(event, param);
+            }, target);
+        }
+    }
 }
 
 // 将接口导出
-(<any>window).it || ((<any>window).it = {});
-(<any>window).it.UIUtils = UIUtils;
+// tslint:disable-next-line: no-unused-expression
+(window as any).it || ((window as any).it = {});
+(window as any).it.UIUtils = UIUtils;

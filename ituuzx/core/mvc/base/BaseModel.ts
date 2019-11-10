@@ -7,6 +7,11 @@ import NotificationManager from "../manager/NotificationManager";
  */
 export default abstract class BaseModel {
 
+   /** 禁止重写和调用，除非你知道自己在干什么 */
+   public __init__(): void {
+      this.init();
+   }
+
    /**
     * 数据对象初始化接口，创建时会调用。
     */

@@ -4,7 +4,7 @@
  */
 import BaseMediator from "./BaseMediator";
 
-export default class ViewEvent{
+export default class ViewEvent {
 
     /** 事件列表 */
     private _eventList: __ViewEvent__[];
@@ -20,11 +20,11 @@ export default class ViewEvent{
      * @param {(any)=>void} cb 事件回调
      * @param {BaseMediator} target 绑定事件的对象
      */
-    public on(name: string, cb: (body: any)=>void, target: BaseMediator): void {
+    public on(name: string, cb: (body: any) => void, target: BaseMediator): void {
         let event = new __ViewEvent__(name, cb, target);
         for (let e of this._eventList) {
             if (e.equals(event)) {
-                console.log("事件[" + name + "]已存在！");
+                it.log("事件[" + name + "]已存在！");
                 return;
             }
         }
@@ -77,7 +77,7 @@ class __ViewEvent__ {
     /** 事件名称 */
     public name: string;
     /** 事件回调 */
-    public cb: (...args)=>void;
+    public cb: (...args: any) => void;
     /** 绑定事件的对象 */
     public target: BaseMediator;
 
@@ -86,7 +86,7 @@ class __ViewEvent__ {
      * @param {(...args)=>void} cb 事件回调
      * @param {BaseMediator} target 绑定事件的对象
      */
-    public constructor(name: string, cb: (...args)=>void, target: BaseMediator) {
+    public constructor(name: string, cb: (...args: any) => void, target: BaseMediator) {
         this.name = name;
         this.cb = cb;
         this.target = target;

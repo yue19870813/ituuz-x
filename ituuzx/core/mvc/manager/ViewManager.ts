@@ -16,11 +16,11 @@ export class ViewManager {
     private static _instance: ViewManager = new ViewManager();
 
     /** 上一场景类 */
-    private _preSceneMediatorCls: {new(): BaseMediator} = null;
-    private _preSceneViewCls: {new(): BaseScene} = null;
+    private _preSceneMediatorCls: new() => BaseMediator = null;
+    private _preSceneViewCls: new() => BaseScene = null;
     /** 当前场景类 */
-    private _curSceneMediatorCls: {new(): BaseMediator} = null;
-    private _curSceneViewCls: {new(): BaseScene} = null;
+    private _curSceneMediatorCls: new() => BaseMediator = null;
+    private _curSceneViewCls: new() => BaseScene = null;
 
     /** 当前场景 */
     private _curScene: BaseMediator;
@@ -35,7 +35,7 @@ export class ViewManager {
      * @constructor
      * @private
      */
-    private constructor () {
+    private constructor() {
         this._popViewList = [];
         this._layerViewList = [];
     }
@@ -55,12 +55,11 @@ export class ViewManager {
      * @param {()=>void} cb 加载完成回调.
      * @private
      */
-    public __runScene__(mediator: {new(): BaseMediator}, view: {new(): BaseScene}, data?: any, cb?: ()=>void): void {
+    public __runScene__(mediator: new() => BaseMediator, view: new() => BaseScene, data?: any, cb?: (med: BaseMediator) => void): void {
+        // 初始化场景全局层级缓存
+        this._maxLayerZorder = 0;
         // 创建并绑定场景
         let sceneMediator: BaseMediator = new mediator();
-        sceneMediator["__init__"]();
-        sceneMediator.init(data);
-
         // 如果前一场景不为空则进行清理
         if (this._curScene) {
             this._curScene.destroy();
@@ -68,6 +67,9 @@ export class ViewManager {
 
         // 保存当前场景
         this._curScene = sceneMediator;
+        // tslint:disable-next-line: no-string-literal
+        sceneMediator["__init__"]();
+        sceneMediator.init(data);
 
         if (this._curSceneMediatorCls != null && this._curSceneViewCls != null) {
             this._preSceneMediatorCls = this._curSceneMediatorCls;
@@ -78,7 +80,7 @@ export class ViewManager {
         this._curSceneViewCls = view;
 
         // 处理场景显示逻辑
-        let scenePath: string = (<any>(view)).path();
+        let scenePath: string = (view as any).path();
         if (scenePath === "") {
             let ccs = new cc.Scene();
             ccs.name = "Scene";
@@ -96,19 +98,19 @@ export class ViewManager {
                 this.__closeAllView__();
                 cc.director.runSceneImmediate(ccs);
                 sceneMediator.viewDidAppear();
-                cb && cb();
+                if (cb) { cb(sceneMediator); }
             }, 1);
         } else {
-            cc.director.loadScene(scenePath, ()=>{
-                this.__closeAllView__();
-                let canvas = cc.director.getScene().getChildByName('Canvas');
+            this.__closeAllView__();
+            cc.director.loadScene(scenePath, () => {
+                let canvas = cc.director.getScene().getChildByName("Canvas");
                 if (canvas) {
                     sceneMediator.view = canvas.addComponent(view);
                     sceneMediator.view.__init__();
                     sceneMediator.viewDidAppear();
-                    cb && cb();
+                    if (cb) { cb(sceneMediator); }
                 } else {
-                    console.log("场景中必须包含默认的Canvas节点！");
+                    it.log("场景中必须包含默认的Canvas节点！");
                 }
             });
         }
@@ -133,38 +135,65 @@ export class ViewManager {
      * @param {Object} data 自定义的任意类型透传数据。（可选）
      * @param {OPEN_VIEW_OPTION} option 打开ui的操作选项，枚举类型。
      * @param {number} zOrder 层级。
-     * @param {()=>void} cb 加载完成回调.
+     * @param {(view: BaseView)=>void} cb 加载完成回调.
+     * @param {boolean} useCache 是否复用已存在的view 可选
      */
-    public __showView__(mediator: {new(): BaseMediator}, view: {new(): BaseView}, data?: any, 
-            option?: OPEN_VIEW_OPTION, zOrder?: number, cb?: ()=>void, parent?: cc.Node): void {
+    public __showView__(mediator: new() => BaseMediator, view: new() => BaseView, data?: any,
+                        option?: OPEN_VIEW_OPTION, zOrder?: number, cb?: (view: BaseView) => void,
+                        parent?: cc.Node, useCache?: boolean): void {
+
+        // 如果使用缓存，则查找是否有缓存，如果有直接使用缓存对象，然后调整层级到最高
+        if (useCache) {
+            let isUseCache = this.useCache(mediator);
+            if (isUseCache) {
+                return;
+            }
+        }
         // 处理打开UI的其他操作
         this.openViewOptionHandler(option);
 
         // 创建并绑定view
         let viewMediator: BaseMediator = new mediator();
+        // tslint:disable-next-line: no-string-literal
+        viewMediator["_name"] = mediator;
+        // tslint:disable-next-line: no-string-literal
         viewMediator["__init__"]();
 
         // 处理场景显示逻辑
-        let viewPath: string = (<any>(view)).path();
+        let viewPath: string = (view as any).path();
         if (viewPath === "") {
             let viewNode = new cc.Node();
-            this.initViewMediator(viewMediator, viewNode, view, option, zOrder, parent);
             viewMediator.init(data);
+            this.initViewMediator(viewMediator, viewNode, view, option, zOrder, parent);
             viewMediator.viewDidAppear();
-            cb && cb();
+            if (cb) { cb(viewMediator.view); }
         } else {
-            ITResourceLoader.loadRes(viewPath, cc.Prefab, (err, prefab)=>{
+            ITResourceLoader.loadRes(viewPath, cc.Prefab, (err, prefab) => {
                 if (err) {
-                    console.error(err);
+                    it.error(err);
                     return;
                 }
                 let viewNode = cc.instantiate(prefab);
-                this.initViewMediator(viewMediator, viewNode, view, option, zOrder, parent);
                 viewMediator.init(data);
+                this.initViewMediator(viewMediator, viewNode, view, option, zOrder, parent);
                 viewMediator.viewDidAppear();
-                cb && cb();
+                if (cb) { cb(viewMediator.view); }
             });
         }
+    }
+
+    /** 当需要复用缓存view时 */
+    private useCache(mediator: new() => BaseMediator): boolean {
+        let isExist = false;
+        for (let med of this._popViewList) {
+            if (mediator === med["_name"]) {
+                med.view.node.zIndex = this._maxLayerZorder + 20;
+                isExist = true;
+            } else {
+                med.view.node.zIndex = this._maxLayerZorder + 10;
+            }
+        }
+        return isExist;
     }
 
     /**
@@ -175,14 +204,14 @@ export class ViewManager {
      * @param {OPEN_VIEW_OPTION} option 打开选项
      * @param {number} zOrder 层级排序
      */
-    private initViewMediator(mediator: BaseMediator, viewNode: cc.Node, view: {new(): BaseView},
-            option?: OPEN_VIEW_OPTION, zOrder?: number, parent?: cc.Node): void {
-        
+    private initViewMediator(mediator: BaseMediator, viewNode: cc.Node, view: new() => BaseView,
+                             option?: OPEN_VIEW_OPTION, zOrder?: number, parent?: cc.Node): void {
+
         mediator.view = viewNode.addComponent(view);
         if (parent) {
             parent.addChild(viewNode);
         } else {
-            cc.director.getScene().getChildByName('Canvas').addChild(viewNode);
+            cc.director.getScene().getChildByName("Canvas").addChild(viewNode);
         }
         mediator.view.__init__();
         // 根据不同打开类型，存储到不同队列中。
@@ -224,8 +253,8 @@ export class ViewManager {
      * @private
      */
     public __closeAllPopView__(): void {
-        for (let i = 0; i < this._popViewList.length; i++) {
-            this._popViewList[i].view["__onClose__"]();
+        for (let popView of this._popViewList) {
+            popView["__destroy__"]();
         }
         this._popViewList = [];
     }
@@ -235,8 +264,9 @@ export class ViewManager {
      * @private
      */
     public __closeAllAddLayer__(): void {
-        for (let i = 0; i < this._layerViewList.length; i++) {
-            this._layerViewList[i].view["__onClose__"]();
+        for (let layerView of this._layerViewList) {
+            // tslint:disable-next-line: no-string-literal
+            layerView["__destroy__"]();
         }
         this._layerViewList = [];
     }

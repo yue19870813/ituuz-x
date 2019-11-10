@@ -1,8 +1,9 @@
 import SimpleCommand from "../../core/mvc/command/SimpleCommand";
 import { Facade } from "../../core/mvc/Facade";
 import JSUtil from "../../core/util/JSUtil";
-import GameScene from "../base/GameScene";
 import { MVC_struct } from "../../Framework";
+import GameMediator from "../base/GameMediator";
+import GameScene from "../base/GameScene";
 
 /**
  * 根据配置加载场景或者view的命令。
@@ -34,7 +35,9 @@ export default class LoadLayersCmd extends SimpleCommand {
         }).then((medModule) => {
             if (JSUtil.isChildClassOf(viewModule, GameScene)) {
                 Facade.getInstance().runScene(medModule,
-                    viewModule, data, loadViewChildren.bind(this));
+                    viewModule, data, (med: GameMediator) => {
+                        loadViewChildren(true);
+                    });
             } else {
                 loadViewChildren(false);
             }
@@ -53,7 +56,7 @@ export default class LoadLayersCmd extends SimpleCommand {
                 let layerList = Facade.getInstance().getLayerList();
                 for (let layer of layerList) {
                     let layerName = layer["__proto__"]["constructor"]["name"];
-                    if (layerName == parent) {
+                    if (layerName === parent) {
                         parentNode = layer.view.node;
                         break;
                     }
@@ -77,5 +80,4 @@ export default class LoadLayersCmd extends SimpleCommand {
             }
         }
     }
-    
 }

@@ -24,6 +24,12 @@ export default class GameView extends BaseView {
     public __init__(): void {
         super.__init__();
         this.loadAtlas();
+        this.onShow();
+    }
+
+    /** @override */
+    public onShow(): void {
+
     }
 
     /** 开始加载atlas */

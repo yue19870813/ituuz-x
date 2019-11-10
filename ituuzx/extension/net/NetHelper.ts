@@ -29,7 +29,7 @@ export enum NetFailCode {
 
 /**
  * 网络客户端基类
- * @author Yue
+ * @author ituuz
  */
 export class NetHelper {
     // 是否初始化

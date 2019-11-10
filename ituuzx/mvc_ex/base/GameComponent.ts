@@ -11,7 +11,7 @@ export default class GameComponent extends cc.Component {
      * @param {{new (): BaseCommand}} cmd 命令类
      * @param {Object} data 命令参数
      */
-    public sendCmd<T extends BaseCommand>(cmd: {new (): T}, data?: any): void {
+    public sendCmd<T extends BaseCommand>(cmd: new () => T, data?: any): void {
         CommandManager.getInstance().__executeCommand__(cmd, data);
     }
 
@@ -28,7 +28,7 @@ export default class GameComponent extends cc.Component {
      * 获取model对象
      * @param {{new (): BaseModel}} model
      */
-    public getModel<T extends BaseModel>(model: {new (): T}): T {
+    public getModel<T extends BaseModel>(model: new () => T): T {
         return Facade.getInstance().getModel(model);
     }
 }

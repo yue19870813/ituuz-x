@@ -1,3 +1,7 @@
+/**
+ * mvc总接口调用类
+ * @author ituuz
+ */
 import FrameworkCfg from "../../FrameworkCfg";
 import BaseCommand from "./base/BaseCommand";
 import BaseMediator from "./base/BaseMediator";
@@ -15,7 +19,7 @@ export class Facade {
     /** 框架是否被初始化 */
     private static _isInit: boolean = false;
 
-    private constructor () {
+    private constructor() {
 
     }
 
@@ -32,7 +36,7 @@ export class Facade {
      */
     public init(debug: boolean, designResolution: cc.Size, fitHeight: boolean, fitWidth: boolean): void {
         if (Facade._isInit) {
-            console.warn("框架已经初始化，不需要重复初始化。");
+            it.warn("框架已经初始化，不需要重复初始化。");
             return;
         }
         Facade._isInit = true;
@@ -49,11 +53,11 @@ export class Facade {
      * @param {Object} data 自定义的任意类型透传数据。（可选）
      * @param {()=>void} cb 加载完成回调.
      */
-    public runScene(mediator: {new(): BaseMediator}, view: {new(): BaseScene}, data?: any, cb?: ()=>void): void {
+    public runScene(mediator: new() => BaseMediator, view: new() => BaseScene, data?: any, cb?: (med: BaseMediator) => void): void {
         if (Facade._isInit) {
             ViewManager.getInstance().__runScene__(mediator, view, data, cb);
         } else {
-            console.warn("框架没有初始化，请先调用init接口进行初始化。");
+            it.warn("框架没有初始化，请先调用init接口进行初始化。");
         }
     }
 
@@ -70,10 +74,12 @@ export class Facade {
      * @param {{new(): BaseMediator}} mediator 界面mediator类型，类类型。
      * @param {{new(): BaseView}} view view 场景mediator类型，类类型。
      * @param {Object} data 自定义的任意类型透传数据。（可选）
-     * @param {()=>void} cb 加载完成回调.
+     * @param {(view: BaseView)=>void} cb 加载完成回调.
+     * @param {boolean} useCache 是否复用已存在的view 可选
      */
-    public popView(mediator: {new(): BaseMediator}, view: {new(): BaseView}, data?: any, cb?: ()=>void): void {
-        ViewManager.getInstance().__showView__(mediator, view, data, OPEN_VIEW_OPTION.OVERLAY, 0, cb);
+    public popView(mediator: new() => BaseMediator, view: new() => BaseView, data?: any,
+                   cb?: (view: BaseView) => void, useCache?: boolean): void {
+        ViewManager.getInstance().__showView__(mediator, view, data, OPEN_VIEW_OPTION.OVERLAY, 0, cb, null, useCache);
     }
 
     /**
@@ -85,8 +91,9 @@ export class Facade {
      * @param {()=>void} cb 加载完成回调
      * @param {cc.Node} parent 父节点
      */
-    public addLayer(mediator: {new(): BaseMediator}, view: {new(): BaseView}, zOrder?: number, data?: any, cb?: ()=>void, parent?: cc.Node): void {
-        ViewManager.getInstance().__showView__(mediator, view, data, OPEN_VIEW_OPTION.LAYER, zOrder, cb, parent);
+    public addLayer(mediator: new() => BaseMediator, view: new() => BaseView, zOrder?: number,
+                    data?: any, cb?: () => void, parent?: cc.Node): void {
+        ViewManager.getInstance().__showView__(mediator, view, data, OPEN_VIEW_OPTION.LAYER, zOrder, cb, parent, false);
     }
 
     /**
@@ -94,7 +101,7 @@ export class Facade {
      * @param {{new (): BaseCommand}} command 命令对象
      * @param {Object} body 命令参数
      */
-    public __undoCommand__(command: {new (): BaseCommand}, body?: any): void {
+    public __undoCommand__(command: new () => BaseCommand, body?: any): void {
         CommandManager.getInstance().__undoCommand__(command, body);
     }
 
@@ -102,7 +109,7 @@ export class Facade {
      * 注册数据model
      * @param {{new (): BaseModel}} model
      */
-    public registerModel(model: {new (): BaseModel}): void {
+    public registerModel(model: new () => BaseModel): void {
         ModelManager.getInstance().registerModel(model);
     }
 
@@ -110,7 +117,7 @@ export class Facade {
      * 获取model对象
      * @param {{new (): BaseModel}} model
      */
-    public getModel<T extends BaseModel>(model: {new (): T}): T {
+    public getModel<T extends BaseModel>(model: new () => T): T {
         return ModelManager.getInstance().getModel(model);
     }
 
@@ -126,7 +133,7 @@ export class Facade {
 }
 
 /** 导入到全局属性mvc中的对外接口和属性等api */
-(<any>(window)).mvc = {
-    appFacade: Facade.getInstance(),
+(window as any).mvc = {
+    appFacade: Facade.getInstance()
 };
 
