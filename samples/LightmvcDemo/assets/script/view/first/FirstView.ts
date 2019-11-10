@@ -29,7 +29,7 @@ export default class FirstView extends GameView {
 
     public setData(str: string): void {
         let desLabel = this.ui.getComponent("des_label", cc.Label);
-        desLabel.string = "这是第一个UI，根据prefab创建，打开场景时传入的参数是：" + str;
+        desLabel.string = "这是第一个UI，根据prefab创建，打开场景时读取场景共享数据sceneContent.data.myName：" + str;
     }
 
     public closeAllView(): void {

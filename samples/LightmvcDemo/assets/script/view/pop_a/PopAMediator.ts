@@ -13,7 +13,7 @@ export default class PopAMediator extends GameMediator {
     }    
     
     public viewDidAppear(): void {
-        this.view.drawView("666");
+        this.view.drawView("999");
 
         let playerModel = this.getModel(PlayerModel);
         this.view.setLevelDisplay(playerModel.getPlayerLv());

@@ -14,6 +14,9 @@ export default class PopAView extends GameView {
             this.closeView();
         }, this);
 
+        // this.ui.addClickEvent(closeBtn, cc.Node.EventType.TOUCH_END, "close");
+        // this.ui.addClickEvent("close_button", cc.Node.EventType.TOUCH_END, "close");
+
         // 显示传入参数的label
         let titleLabel = this.ui.getComponent("title_label", cc.Label);
         titleLabel.string = "传入的参数为：" + param;

@@ -10,8 +10,7 @@ export default class DefaultSceneMediator extends GameMediator {
     private _data: any;
     
     public init(data?: any): void {
-        console.log("打开场景时传递的参数:", data);
-        this._data = data;
+        this.sceneContent.data.myName = "ituuz";
     }    
     
     public viewDidAppear(): void {
