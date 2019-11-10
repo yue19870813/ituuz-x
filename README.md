@@ -11,12 +11,13 @@ ituuz-x是一个cocos creator游戏开发一个集成框架，也是一个工具
 ------------
 
 # 入门介绍
-[core-mvc模块介绍:轻量级游戏开发mvc框架](http://ituuz.com/2019/07/15/lightMVC-1/)
-[mvc_ex模块介绍:mvc拓展模块](http://ituuz.com/2019/10/09/mvc-ex/)
+- [core-mvc模块介绍:轻量级游戏开发mvc框架](http://ituuz.com/2019/07/15/lightMVC-1/)
+- [mvc_ex模块介绍:mvc拓展模块](http://ituuz.com/2019/10/09/mvc-ex/)
+- [ituuz-x游戏框架v2.1新特性介绍](http://ituuz.com/2019/11/10/ituuz-x-v2-1特性介绍/)
 
 # 近期版本内容
 ## v2.1版本功能
-> v2.1版本主要是修复bug，以及对之前的功能进行了优化。
+> v2.1版本主要是修复bug，以及对之前的功能进行了优化。相关文档[ituuz-x游戏框架v2.1新特性介绍](http://ituuz.com/2019/11/10/ituuz-x-v2-1特性介绍/)
 - [`new`]增加GameModel基类，目前增加了一些数据接口封装，是为了下个版本数据管理增加支持
 - [`new`]View层的GameView增加onShow接口，该接口是view其他初始化结束后最终会调用的接口
 - [`new`]ViewEvent增加注册点击事件，方便静态事件注册
@@ -31,7 +32,7 @@ ituuz-x是一个cocos creator游戏开发一个集成框架，也是一个工具
 - [`ts`]优化代码，增加注释，统一编码风格等
 
 ## v2.0新增功能（lightMVC_ex）
-> v2.0主要对核心模块中的lightMVC进行了拓展，增加了更多接口和功能，方便更大规模项目使用
+> v2.0主要对核心模块中的lightMVC进行了拓展，增加了更多接口和功能，方便更大规模项目使用，相关文档[mvc_ex模块介绍:mvc拓展模块](http://ituuz.com/2019/10/09/mvc-ex/)
 - 框架全局可调用的接口
 - 新增GameMediator基类
 - 新增GameView基类，对应GameMediator，暂无新增功能。
