@@ -1,16 +1,15 @@
 import NetClientBase from "./NetClientBase";
 import MessageBase from "./MessageBase";
-import { NetHelper } from "./NetHelper";
+import { NetHelper, NetFailCode } from "./NetHelper";
 
 /**
- * http消息发送和解析
+ * HttpClient 处理HTTP消息发送，业务逻辑无需关心
  * @author ituuz
  */
 export default class HttpClient extends NetClientBase {
-    // 数据总长度
-    public static readonly DATA_TOTAL_LEN = 4;	
-    // 协议号长度
-    public static readonly PROTOCOLTYPE_LEN = 4;	
+
+    public static readonly DATA_TOTAL_LEN = 4;	// 数据总长度
+    public static readonly PROTOCOLTYPE_LEN = 4;	// 协议号长度
 
     /**
      * 发送消息协议
@@ -19,12 +18,13 @@ export default class HttpClient extends NetClientBase {
     public sendReq(msg: MessageBase): void {
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = () => {
-            if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
+            if (xhr.readyState === 4 && (xhr.status >= 200 && xhr.status < 400)) {
                 let response: ArrayBuffer = xhr.response;
                 this.encode(response);
             }
         };
         xhr.open("POST", this.addr, true);
+        xhr.responseType = "arraybuffer";
         let buffer = this.decode(msg);
         xhr.send(buffer);
     }
@@ -33,9 +33,6 @@ export default class HttpClient extends NetClientBase {
      * 对消息体进行压包
      * @param {MessageBase} msg 消息对象
      * @return {ArrayBuffer} 压包后的而进行数据
-     * int32 协议id
-     * int32 协议体长度
-     * data 协议体
      */
     private decode(msg: MessageBase): ArrayBuffer {
         let buffer = msg.toBuffer();
@@ -57,11 +54,18 @@ export default class HttpClient extends NetClientBase {
      */
     private encode(recvBuf: ArrayBuffer) {
         let recvView = new DataView(recvBuf);
-        let PID = recvView.getInt32(0); 
+        let PID = recvView.getInt32(0);
+        // let len = recvView.getInt32(HttpClient.PROTOCOLTYPE_LEN);
         let data = recvBuf.slice(HttpClient.DATA_TOTAL_LEN + HttpClient.PROTOCOLTYPE_LEN, recvBuf.byteLength);
         let cls = NetHelper.getMessageCls(PID);
-        let msg: MessageBase = (<any>cls).create(() => {
-            msg.parseBuffer(data);
-        });
+        let msg: MessageBase = new cls();
+        msg.parseBuffer(data);
+        NetHelper.dispatcher(PID, msg);
+    }
+
+    public connect(succCB: () => void, faultCB: (code: NetFailCode) => void): void {
+        if (succCB) {
+            succCB();
+        }
     }
 }

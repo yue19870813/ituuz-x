@@ -3,25 +3,29 @@
  * @author ituuz
  */
 export default class MessageBase {
-    public static create(cb: () => void): MessageBase {
-        return null;
+    
+    public static create(cb: (msg: MessageBase) => void) {
+
     }
 
-    /**
-     * 将消息体转成ArrayBuff
-     */
+    public static loadPbFile(cb: () => {}): void {
+    }
+
     public toBuffer(): any {
         return null;
     }
 
-    /**
-     * 将ArrayBuff转成消息对象
-     * @param buffer 
-     */
-    public parseBuffer(buffer: any): void {
+    public parseBuffer(buffer): void {
     }
 
-    // 返回协议pid
+    public getObject(): any {
+        return null;
+    }
+
+    public setObject(obj: any): void {
+    }
+
+    // 协议pid
     public get PID(): number {
         return -1;
     }
