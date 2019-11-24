@@ -62,7 +62,7 @@ export class ViewManager {
         let sceneMediator: BaseMediator = new mediator();
         // 如果前一场景不为空则进行清理
         if (this._curScene) {
-            this._curScene.destroy();
+            this._curScene["__destroy__"]();
         }
 
         // 保存当前场景
