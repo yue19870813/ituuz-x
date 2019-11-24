@@ -62,7 +62,7 @@ export class ViewManager {
         let sceneMediator: BaseMediator = new mediator();
         // 如果前一场景不为空则进行清理
         if (this._curScene) {
-            this._curScene.destroy();
+            this._curScene["__destroy__"]();
         }
 
         // 保存当前场景
@@ -236,13 +236,19 @@ export class ViewManager {
     public __closeView__(view: BaseView): void {
         for (let i = 0; i < this._popViewList.length; i++) {
             if (this._popViewList[i].view === view) {
-                this._popViewList.splice(i, 1);
+                let temp = this._popViewList.splice(i, 1);
+                if (temp && temp.length > 0) {
+                    temp[0]["__destroy__"]();
+                }
                 return;
             }
         }
         for (let i = 0; i < this._layerViewList.length; i++) {
             if (this._layerViewList[i].view === view) {
-                this._layerViewList.splice(i, 1);
+                let temp = this._layerViewList.splice(i, 1);
+                if (temp && temp.length > 0) {
+                    temp[0]["__destroy__"]();
+                }
                 return;
             }
         }

@@ -1,4 +1,5 @@
 import LogUtil from "../../core/util/LogUtil";
+import MessageBase from "./MessageBase";
 
 /**
  * 处理pb相关接口工具类
@@ -10,9 +11,8 @@ export default class PBUtils {
     /** 工具初始化接口 */
     public static init() {
         PBUtils.protobufjs = require("protobufjs");
-        // 此方法是将ProtoBuf.Util.fetch函数替换成cc.loader.loadRes函数，以解决在微信小游戏中不能使用XHR的问题
-		PBUtils.protobufjs.loadProtoFile = (filename: string, callback: (e, r) => void) => {
-            cc.loader.loadRes(filename, cc.JsonAsset, (err, json) => {
+		PBUtils.protobufjs.loadProtoFile = (filename: string, callback: (e: any, r: any) => void) => {
+            cc.loader.loadRes(filename, cc.JsonAsset, (err: any, json: cc.JsonAsset) => {
                 if (err) {
                     LogUtil.warn(filename + "is not exist!");
                     return;
@@ -24,7 +24,31 @@ export default class PBUtils {
     }
 
     /** 加载指定的pb文件 */
-    public static loadFile(filename: string, callback: (e, r) => void): void {
+    public static loadFile(filename: string, callback: (e:any, r: any) => void): void {
         PBUtils.protobufjs.loadProtoFile(filename, callback);
+    }
+
+    public static getArrayObjects(msg: any): any[] {
+        let result = [];
+        for (let b of msg) {
+            result.push(b.getObject());
+        }
+        return result;
+    }
+
+    public static getArrayMessages<T extends MessageBase>(obj: any, cls: new() => T): T[] {
+        let list: T[] = [];
+        for (let arr of obj) {
+            let msg = new cls();
+            msg.setObject(arr);
+            list.push(msg);
+        }
+        return list;
+    }
+
+    public static getMessage<T extends MessageBase>(obj: any, cls: new() => T): T {
+        let msg = new cls();
+        msg.setObject(obj);
+        return msg;
     }
 }

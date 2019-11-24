@@ -55,7 +55,7 @@ export class BaseView extends cc.Component {
      */
     public closeView(): void {
         ViewManager.getInstance().__closeView__(this);
-        this.__onClose__();
+        // this.__onClose__();
     }
 
     /**

@@ -1,0 +1,15 @@
+syntax = "proto3";
+package msg;
+
+// 登陆请求 
+// PID_KEY:10000
+message LoginSend {
+    string userId = 1;
+    string token = 2;
+}
+// 登陆回复 
+// PID_KEY:20001
+message LoginBack {
+    string userId = 1;
+    string nickname = 2; // 昵称
+}

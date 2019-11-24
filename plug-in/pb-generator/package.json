@@ -1,0 +1,19 @@
+{
+  "name": "pb-generator",
+  "version": "0.0.1",
+  "description": "The package template for getting started.",
+  "author": "Yue",
+  "main": "main.js",
+  "main-menu": {
+    "i18n:MAIN_MENU.package.title/pb-generator/生成": {
+      "message": "pb-generator:generate"
+    }
+  },
+  "panel": {
+    "main": "panel/index.js",
+    "type": "dockable",
+    "title": "pb-generator",
+    "width": 400,
+    "height": 300
+  }
+}

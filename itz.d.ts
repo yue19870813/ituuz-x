@@ -101,3 +101,4 @@ declare namespace it {
         public getComponent<T extends cc.Component>(name: string, com: { prototype: T }): T;
     }
 }
+
