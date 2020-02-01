@@ -1,6 +1,6 @@
 /**
  * JSUtil:操作js相关接口.
- * @author Yue
+ * @author ituuz
  * @desc 根据字符串创建对象,判断是否是派生类等接口.
  */
 export default class JSUtil {
