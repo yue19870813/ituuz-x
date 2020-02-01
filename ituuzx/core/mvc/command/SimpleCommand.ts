@@ -6,6 +6,7 @@ import BaseCommand from "../base/BaseCommand";
 import BaseModel from "../base/BaseModel";
 import {Facade} from "../Facade";
 import CommandManager from "../manager/CommandManager";
+import NotificationManager from "../manager/NotificationManager";
 
 export default abstract class SimpleCommand extends BaseCommand {
 
@@ -25,7 +26,7 @@ export default abstract class SimpleCommand extends BaseCommand {
      * 获取model对象
      * @param {{new (): BaseModel}} model
      */
-    public getModel<T extends BaseModel>(model: {new (): T}): T {
+    public getModel<T extends BaseModel>(model: new () => T): T {
         return Facade.getInstance().getModel(model);
     }
 
@@ -34,7 +35,7 @@ export default abstract class SimpleCommand extends BaseCommand {
      * @param {{new (): BaseCommand}} command 命令对象
      * @param {Object} body 命令参数
      */
-    public sendCmd(command: {new (): BaseCommand}, body?: any): void {
+    public sendCmd(command: new () => BaseCommand, body?: any): void {
         CommandManager.getInstance().__executeCommand__(command, body);
     }
 
@@ -43,11 +44,17 @@ export default abstract class SimpleCommand extends BaseCommand {
      * @param {{new (): BaseCommand}} command 命令对象
      * @param {Object} body 命令参数
      */
-    public undoCmd(command: {new (): BaseCommand}, body?: any): void {
+    public undoCmd(command: new () => BaseCommand, body?: any): void {
         Facade.getInstance().__undoCommand__(command, body);
     }
 
-    public sendNoti(): void {
-
+    /**
+     * 发送消息通知, 框架使用，外部不得调用。
+     * @param {string} noti 通知key值
+     * @param {Object} body 消息传递的参数
+     * @private
+     */
+    public sendNoti(noti: string | number, body?: any): void {
+        NotificationManager.getInstance().__sendNotification__(noti, body);
     }
 }

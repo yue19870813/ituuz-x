@@ -1,12 +1,12 @@
 import { Facade } from "../Facade";
 import CommandManager from "../manager/CommandManager";
 import NotificationManager from "../manager/NotificationManager";
-import { ViewManager } from "../manager/ViewManager";
 import BaseCommand from "./BaseCommand";
 import BaseModel from "./BaseModel";
 import BaseScene from "./BaseScene";
 import { BaseView } from "./BaseView";
 import GameContent from "./GameContent";
+import { ViewManager } from "../manager/ViewManager";
 
 /**
  * 视图中介者基类
@@ -18,7 +18,7 @@ import GameContent from "./GameContent";
  */
 export default abstract class BaseMediator {
 
-    private _name: any;
+    public medName: any;
 
     /** 当前场景content */
     private _sceneContent: GameContent;
@@ -55,11 +55,18 @@ export default abstract class BaseMediator {
 
     }
 
-    /**
-     * 视图显示后会调用的接口
-     * @override
-     */
+    /** 视图创建完成显示时会调用的接口 */
     public abstract viewDidAppear(): void;
+    /** 从底层显示到最上层时调用 */
+    public __onAppear__(): void {
+        this.onAppear();
+    }
+    public abstract onAppear(): void;
+    /** 从最上层被其他View遮挡变成下层时调用 */
+    public __onDisappear__(): void {
+        this.onDisappear();
+    }
+    public abstract onDisappear(): void;
 
     /**
      * 绑定UI事件，接收view层派发的事件。
@@ -135,7 +142,7 @@ export default abstract class BaseMediator {
      * @param {Object} data 自定义的任意类型透传数据。（可选）
      */
     public addLayer(mediator: new() => BaseMediator, view: new() => BaseView, zOrder?: number, data?: any): void {
-        Facade.getInstance().addLayer(mediator, view, zOrder, data);
+        Facade.getInstance().addLayer(mediator, view, "", zOrder, data);
     }
 
     /**
@@ -146,9 +153,13 @@ export default abstract class BaseMediator {
         return Facade.getInstance().getModel(model);
     }
 
+    /** 游戏从后台激活 */
+    public onGameShow(): void { }
+    /** 游戏进入后台 */
+    public onGameHide(): void { }
+
     private __destroy__(): void {
-        // tslint:disable-next-line: no-string-literal
-        this.view["__onClose__"]();
+        this.view.__onClose__();
         this.destroy();
     }
 

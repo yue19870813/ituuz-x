@@ -12,6 +12,7 @@ const {ccclass, property} = cc._decorator;
 export class BaseView extends cc.Component {
 
     /** 当前视图的事件对象 */
+    // tslint:disable-next-line: variable-name
     private __event__: ViewEvent;
     /** UI节点引用 */
     public ui: UIContainer;
@@ -55,7 +56,6 @@ export class BaseView extends cc.Component {
      */
     public closeView(): void {
         ViewManager.getInstance().__closeView__(this);
-        // this.__onClose__();
     }
 
     /**
@@ -65,7 +65,7 @@ export class BaseView extends cc.Component {
         ViewManager.getInstance().__closeAllPopView__();
     }
 
-    private __onClose__(): void {
+    public __onClose__(): void {
         this.__event__.destroy();
         this.onClose();
         this.node.destroy();

@@ -17,7 +17,7 @@ export default class CommandManager {
      * @constructor
      * @private
      */
-    private constructor () {
+    private constructor() {
 
     }
 
@@ -33,7 +33,7 @@ export default class CommandManager {
      * @param {{new (): BaseCommand}} command 命令对象
      * @param {Object} body 命令参数
      */
-    public __executeCommand__(command: {new (): BaseCommand}, body?: any): void {
+    public __executeCommand__(command: new () => BaseCommand, body?: any): void {
         if (cc.js.isChildClassOf(command, SimpleCommand)) {
             let cmd: SimpleCommand = new command() as SimpleCommand;
             cmd.execute(body);
@@ -42,11 +42,13 @@ export default class CommandManager {
         } else if (cc.js.isChildClassOf(command, AsyncMacroCommand)) {
             let cmd: AsyncMacroCommand = new command() as AsyncMacroCommand;
             // 初始化宏
+            // tslint:disable-next-line: no-string-literal
             cmd["initialize"]();
             // 执行
+            // tslint:disable-next-line: no-string-literal
             cmd["asyncExecute"]();
         } else {
-            console.log(command.prototype + " 不是可执行的命令！");
+            mi.log(command.prototype + " 不是可执行的命令！");
         }
     }
 
@@ -55,7 +57,7 @@ export default class CommandManager {
      * @param {{new (): BaseCommand}} command 命令对象
      * @param {Object} body 命令参数
      */
-    public __undoCommand__(command: {new (): BaseCommand}, body?: any): void {
+    public __undoCommand__(command: new () => BaseCommand, body?: any): void {
         if (cc.js.isChildClassOf(command, SimpleCommand)) {
             let cmd: SimpleCommand = new command() as SimpleCommand;
             cmd.undo(body);
@@ -64,11 +66,13 @@ export default class CommandManager {
         } else if (cc.js.isChildClassOf(command, AsyncMacroCommand)) {
             let cmd: AsyncMacroCommand = new command() as AsyncMacroCommand;
             // 初始化宏
+            // tslint:disable-next-line: no-string-literal
             cmd["initialize"]();
             // 执行
+            // tslint:disable-next-line: no-string-literal
             cmd["asyncUndo"]();
         } else {
-            console.log(command.prototype + " 不是可执行的命令！");
+            mi.log(command.prototype + " 不是可执行的命令！");
         }
     }
 }
