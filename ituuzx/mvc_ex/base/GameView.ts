@@ -15,6 +15,7 @@
 import { BaseView } from "../../core/mvc/base/BaseView";
 import ITUIAtlas from "../../core/load/atlas/ITAtlas";
 import AtlasManager from "../../core/load/atlas/AtlasManager";
+import { ViewManager } from "../../core/mvc/manager/ViewManager";
 
 export default class GameView extends BaseView {
     /** 用于获取纹理贴图对象 */
@@ -38,9 +39,9 @@ export default class GameView extends BaseView {
         let atlasList = this.atlasName();
         for (let atlas of atlasList) {
             // 通过AtlasManager加载图集纹理资源，并返回图集引用；
-            let itAtlas = AtlasManager.loadAtlas(atlas);
+            let miAtlas = AtlasManager.loadAtlas(atlas);
             // 将图集引用添加到当前UI对象中，方便使用。
-            this._uiAtlas.addAtlas(atlas, itAtlas);
+            this._uiAtlas.addAtlas(atlas, miAtlas);
         }
     }
 
@@ -61,14 +62,19 @@ export default class GameView extends BaseView {
         return [];
     }
 
-    /** @override */
-    public onClose(): void {
+    public __onClose__(): void {
+        super.__onClose__();
+        // 处理纹理是否
         let atlasMap = this._uiAtlas.atlasMap;
         let keys = atlasMap.keys();
         let keyList = Array.from(keys);
         for (let k of keyList) {
             AtlasManager.releaseAtlas(k);
         }
+    }
+
+    /** @override */
+    public onClose(): void {
     }
 
 }

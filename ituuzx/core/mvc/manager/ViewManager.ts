@@ -55,13 +55,14 @@ export class ViewManager {
      * @param {()=>void} cb 加载完成回调.
      * @private
      */
-    public __runScene__(mediator: new() => BaseMediator, view: new() => BaseScene, data?: any, cb?: (med: BaseMediator) => void): void {
+    public __runScene__(mediator: new() => BaseMediator, view: new() => BaseScene, data?: any, cb?: (med: BaseMediator) => void): BaseMediator {
         // 初始化场景全局层级缓存
         this._maxLayerZorder = 0;
         // 创建并绑定场景
         let sceneMediator: BaseMediator = new mediator();
         // 如果前一场景不为空则进行清理
         if (this._curScene) {
+            // tslint:disable-next-line: no-string-literal
             this._curScene["__destroy__"]();
         }
 
@@ -83,6 +84,7 @@ export class ViewManager {
         let scenePath: string = (view as any).path();
         if (scenePath === "") {
             let ccs = new cc.Scene();
+            ccs.autoReleaseAssets = true;
             ccs.name = "Scene";
             let canvasNode = new cc.Node();
             canvasNode.name = "Canvas";
@@ -103,7 +105,9 @@ export class ViewManager {
         } else {
             this.__closeAllView__();
             cc.director.loadScene(scenePath, () => {
-                let canvas = cc.director.getScene().getChildByName("Canvas");
+                let ccs = cc.director.getScene();
+                ccs.autoReleaseAssets = true;
+                let canvas = ccs.getChildByName("Canvas");
                 if (canvas) {
                     sceneMediator.view = canvas.addComponent(view);
                     sceneMediator.view.__init__();
@@ -114,6 +118,7 @@ export class ViewManager {
                 }
             });
         }
+        return sceneMediator;
     }
 
     /**
@@ -132,20 +137,25 @@ export class ViewManager {
      * 打开view界面
      * @param {{new(): BaseMediator}} mediator 界面mediator类型，类类型。
      * @param {{new(): BaseView}} view view 场景mediator类型，类类型。
+     * @param {string} name 界面name。
      * @param {Object} data 自定义的任意类型透传数据。（可选）
      * @param {OPEN_VIEW_OPTION} option 打开ui的操作选项，枚举类型。
      * @param {number} zOrder 层级。
      * @param {(view: BaseView)=>void} cb 加载完成回调.
      * @param {boolean} useCache 是否复用已存在的view 可选
      */
-    public __showView__(mediator: new() => BaseMediator, view: new() => BaseView, data?: any,
-                        option?: OPEN_VIEW_OPTION, zOrder?: number, cb?: (view: BaseView) => void,
-                        parent?: cc.Node, useCache?: boolean): void {
+    public __showView__(mediator: new() => BaseMediator, view: new() => BaseView,
+                        name: string, data?: any, option?: OPEN_VIEW_OPTION, zOrder?: number,
+                        cb?: (view: BaseView) => void, parent?: cc.Node, useCache?: boolean): void {
 
         // 如果使用缓存，则查找是否有缓存，如果有直接使用缓存对象，然后调整层级到最高
         if (useCache) {
-            let isUseCache = this.useCache(mediator);
+            let isUseCache = this.useCache(name);
             if (isUseCache) {
+                this.doAppearOrDisappear();
+                if (cb) {
+                    cb(this.popViewList[this.popViewList.length - 1].view);
+                }
                 return;
             }
         }
@@ -154,8 +164,7 @@ export class ViewManager {
 
         // 创建并绑定view
         let viewMediator: BaseMediator = new mediator();
-        // tslint:disable-next-line: no-string-literal
-        viewMediator["_name"] = mediator;
+        viewMediator.medName = name;
         // tslint:disable-next-line: no-string-literal
         viewMediator["__init__"]();
 
@@ -163,6 +172,9 @@ export class ViewManager {
         let viewPath: string = (view as any).path();
         if (viewPath === "") {
             let viewNode = new cc.Node();
+            viewNode.width = cc.winSize.width;
+            viewNode.height = cc.winSize.height;
+            viewNode.name = name;
             viewMediator.init(data);
             this.initViewMediator(viewMediator, viewNode, view, option, zOrder, parent);
             viewMediator.viewDidAppear();
@@ -174,6 +186,7 @@ export class ViewManager {
                     return;
                 }
                 let viewNode = cc.instantiate(prefab);
+                viewNode.name = name;
                 viewMediator.init(data);
                 this.initViewMediator(viewMediator, viewNode, view, option, zOrder, parent);
                 viewMediator.viewDidAppear();
@@ -183,17 +196,45 @@ export class ViewManager {
     }
 
     /** 当需要复用缓存view时 */
-    private useCache(mediator: new() => BaseMediator): boolean {
+    private useCache(name: string): boolean {
+        let idx = -1;
         let isExist = false;
-        for (let med of this._popViewList) {
-            if (mediator === med["_name"]) {
+        for (let i = 0; i < this._popViewList.length; i++) {
+            let med = this._popViewList[i];
+            // tslint:disable-next-line: no-string-literal
+            if (name === med.medName) {
                 med.view.node.zIndex = this._maxLayerZorder + 20;
                 isExist = true;
+                idx = i;
             } else {
                 med.view.node.zIndex = this._maxLayerZorder + 10;
             }
         }
+        // 处理_popViewList数组顺序,将复用的view重新放到最上层
+        if (idx >= 0) {
+            let meds = this._popViewList.splice(idx, 1);
+            if (meds && meds.length > 0) {
+                this._popViewList.push(meds[0]);
+            }
+        }
         return isExist;
+    }
+
+    private doAppearOrDisappear(): void {
+        // 在push新view进入最上层之前先调用前一个最上层viewMediator的onDisappear接口
+        if (this.popViewList.length > 0) {
+            let preView = this.popViewList[this.popViewList.length - 1];
+            preView.__onAppear__();
+        }
+        if (this.popViewList.length > 1) {
+            let preView = this.popViewList[this.popViewList.length - 2];
+            preView.__onDisappear__();
+        }
+        // if (this.layerViewList) {
+        //     for (let layer of this.layerViewList) {
+        //         layer.__onDisappear__();
+        //     }
+        // }
     }
 
     /**
@@ -219,6 +260,8 @@ export class ViewManager {
             // 这里处理层级设置：保障popview层级大于layer层级，这里固定大于10.
             viewNode.zIndex = this._maxLayerZorder + 10;
             this._popViewList.push(mediator);
+            // 处理显示隐藏
+            this.doAppearOrDisappear();
         } else if (option === OPEN_VIEW_OPTION.LAYER) {
             viewNode.zIndex = zOrder;
             this._layerViewList.push(mediator);
@@ -238,8 +281,21 @@ export class ViewManager {
             if (this._popViewList[i].view === view) {
                 let temp = this._popViewList.splice(i, 1);
                 if (temp && temp.length > 0) {
+                    // tslint:disable-next-line: no-string-literal
                     temp[0]["__destroy__"]();
                 }
+                // 调用当前最上层ViewMediator的onAppear接口
+                if (this.popViewList.length > 0) {
+                    let preView = this.popViewList[this.popViewList.length - 1];
+                    preView.__onAppear__();
+                }
+                // if (this.popViewList.length <= 0) {
+                //     if (this.layerViewList) {
+                //         for (let layer of this.layerViewList) {
+                //             layer.__onAppear__();
+                //         }
+                //     }
+                // }
                 return;
             }
         }
@@ -247,6 +303,7 @@ export class ViewManager {
             if (this._layerViewList[i].view === view) {
                 let temp = this._layerViewList.splice(i, 1);
                 if (temp && temp.length > 0) {
+                    // tslint:disable-next-line: no-string-literal
                     temp[0]["__destroy__"]();
                 }
                 return;
@@ -260,6 +317,7 @@ export class ViewManager {
      */
     public __closeAllPopView__(): void {
         for (let popView of this._popViewList) {
+            // tslint:disable-next-line: no-string-literal
             popView["__destroy__"]();
         }
         this._popViewList = [];
@@ -299,6 +357,24 @@ export class ViewManager {
         // 根据不同操作做不同处理
         if (option === OPEN_VIEW_OPTION.SINGLE) {
             // TODO:暂时不提供这种关闭其他view的打开方式，可以通过BaseView.closeAllPopView()来实现。
+        }
+    }
+
+    /** 游戏进入后台或者前台事件 */
+    public showOrHide(flag: string): void {
+        for (let popView of this._popViewList) {
+            if (flag === "hide") {
+                popView.onGameHide();
+            } else if (flag === "show") {
+                popView.onGameShow();
+            }
+        }
+        for (let layer of this._layerViewList) {
+            if (flag === "hide") {
+                layer.onGameHide();
+            } else if (flag === "show") {
+                layer.onGameShow();
+            }
         }
     }
 
