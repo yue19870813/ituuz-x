@@ -39,6 +39,7 @@ export default class ViewEvent {
     public emit(name: string, body?: any): void {
         for (let e of this._eventList) {
             if (e.name === name) {
+                // tslint:disable-next-line: no-unused-expression
                 e.cb && e.cb.call(e.target, body);
                 break;
             }
@@ -73,11 +74,12 @@ export default class ViewEvent {
  * 事件对象结构，用于内部使用。
  * @private
  */
+// tslint:disable-next-line: class-name
 class __ViewEvent__ {
     /** 事件名称 */
     public name: string;
     /** 事件回调 */
-    public cb: (...args: any) => void;
+    public cb: (...args) => void;
     /** 绑定事件的对象 */
     public target: BaseMediator;
 
@@ -86,7 +88,7 @@ class __ViewEvent__ {
      * @param {(...args)=>void} cb 事件回调
      * @param {BaseMediator} target 绑定事件的对象
      */
-    public constructor(name: string, cb: (...args: any) => void, target: BaseMediator) {
+    public constructor(name: string, cb: (...args) => void, target: BaseMediator) {
         this.name = name;
         this.cb = cb;
         this.target = target;

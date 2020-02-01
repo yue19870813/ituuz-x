@@ -53,11 +53,12 @@ export class Facade {
      * @param {Object} data 自定义的任意类型透传数据。（可选）
      * @param {()=>void} cb 加载完成回调.
      */
-    public runScene(mediator: new() => BaseMediator, view: new() => BaseScene, data?: any, cb?: (med: BaseMediator) => void): void {
+    public runScene(mediator: new() => BaseMediator, view: new() => BaseScene, data?: any, cb?: (med: BaseMediator) => void): BaseMediator {
         if (Facade._isInit) {
-            ViewManager.getInstance().__runScene__(mediator, view, data, cb);
+            return ViewManager.getInstance().__runScene__(mediator, view, data, cb);
         } else {
             it.warn("框架没有初始化，请先调用init接口进行初始化。");
+            return null;
         }
     }
 
@@ -77,9 +78,9 @@ export class Facade {
      * @param {(view: BaseView)=>void} cb 加载完成回调.
      * @param {boolean} useCache 是否复用已存在的view 可选
      */
-    public popView(mediator: new() => BaseMediator, view: new() => BaseView, data?: any,
-                   cb?: (view: BaseView) => void, useCache?: boolean): void {
-        ViewManager.getInstance().__showView__(mediator, view, data, OPEN_VIEW_OPTION.OVERLAY, 0, cb, null, useCache);
+    public popView(mediator: new() => BaseMediator, view: new() => BaseView, name: string,
+                   data?: any, cb?: (view: BaseView) => void, useCache?: boolean): void {
+        ViewManager.getInstance().__showView__(mediator, view, name, data, OPEN_VIEW_OPTION.OVERLAY, 0, cb, null, useCache);
     }
 
     /**
@@ -88,12 +89,12 @@ export class Facade {
      * @param {{new(): BaseView}} view view 场景mediator类型，类类型。
      * @param {number} zOrder ui层级
      * @param {Object} data 自定义的任意类型透传数据。（可选）
-     * @param {()=>void} cb 加载完成回调
+     * @param {(view: BaseView)=>void} cb 加载完成回调
      * @param {cc.Node} parent 父节点
      */
-    public addLayer(mediator: new() => BaseMediator, view: new() => BaseView, zOrder?: number,
-                    data?: any, cb?: () => void, parent?: cc.Node): void {
-        ViewManager.getInstance().__showView__(mediator, view, data, OPEN_VIEW_OPTION.LAYER, zOrder, cb, parent, false);
+    public addLayer(mediator: new() => BaseMediator, view: new() => BaseView, name: string,
+                    zOrder?: number, data?: any, cb?: (view: BaseView) => void, parent?: cc.Node): void {
+        ViewManager.getInstance().__showView__(mediator, view, name, data, OPEN_VIEW_OPTION.LAYER, zOrder, cb, parent, false);
     }
 
     /**
@@ -129,6 +130,16 @@ export class Facade {
     /** 获取层级列表 */
     public getLayerList(): BaseMediator[] {
         return ViewManager.getInstance().layerViewList;
+    }
+
+    /** 根据名字获取mediator */
+    public getViewByName(name: string): BaseMediator {
+        let layerList = ViewManager.getInstance().layerViewList;
+        for (let layer of layerList) {
+            if (layer.medName === name) {
+                return layer;
+            }
+        }
     }
 }
 

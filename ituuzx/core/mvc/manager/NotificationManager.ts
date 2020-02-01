@@ -51,12 +51,19 @@ export default class NotificationManager {
      */
     private loopMap(list: BaseMediator[], noti: string | number, body?: any): void {
         for (let med of list) {
-            let notiMap: Map<string | number, {key: string| number, cb: (data: any) => void, target: any}> = med["_notiMap"];
-            notiMap.forEach((value: {key: string | number, cb: (data: any) => void, target: any}, key: string) => {
-                if (key === noti) {
-                    value.cb.call(value.target, body);
+            if (med == null || med === undefined) {
+                continue;
+            }
+            try {
+                // tslint:disable-next-line: no-string-literal
+                let notiMap: Map<string | number, {key: string| number, cb: (data: any) => void, target: any}> = med["_notiMap"];
+                let notiObj = notiMap.get(noti);
+                if (notiObj) {
+                    notiObj.cb.call(notiObj.target, body);
                 }
-            }, this);
+            } catch (e) {
+                mi.error(e);
+            }
         }
     }
 }

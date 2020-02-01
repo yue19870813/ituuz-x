@@ -1,9 +1,12 @@
 import SimpleCommand from "../../core/mvc/command/SimpleCommand";
 import { Facade } from "../../core/mvc/Facade";
 import JSUtil from "../../core/util/JSUtil";
-import { MVC_struct } from "../../Framework";
+import { MVC_struct, MVC_scene } from "../../Framework";
+import FrameworkCfg from "../../FrameworkCfg";
 import GameMediator from "../base/GameMediator";
 import GameScene from "../base/GameScene";
+import GameView from "../base/GameView";
+import { LoadingManager } from "../manager/LoadingManager";
 
 /**
  * 根据配置加载场景或者view的命令。
@@ -37,7 +40,8 @@ export default class LoadLayersCmd extends SimpleCommand {
                 Facade.getInstance().runScene(medModule,
                     viewModule, data, (med: GameMediator) => {
                         loadViewChildren(true);
-                    });
+                    }
+                );
             } else {
                 loadViewChildren(false);
             }
@@ -55,7 +59,8 @@ export default class LoadLayersCmd extends SimpleCommand {
             } else {
                 let layerList = Facade.getInstance().getLayerList();
                 for (let layer of layerList) {
-                    let layerName = layer["__proto__"]["constructor"]["name"];
+                    // tslint:disable-next-line: no-string-literal
+                    let layerName = layer.medName;
                     if (layerName === parent) {
                         parentNode = layer.view.node;
                         break;
@@ -70,7 +75,7 @@ export default class LoadLayersCmd extends SimpleCommand {
                     viewModule = module;
                     return JSUtil.importCls(mvcObj.medClass);
                 }).then((medModule) => {
-                    Facade.getInstance().addLayer(medModule, viewModule, i, null, () => {
+                    Facade.getInstance().addLayer(medModule, viewModule, mvcObj.medClass, i, null, (view: GameView) => {
                         // 加载完成后的回调,递归加载childern
                         if (mvcObj.children && mvcObj.children.length > 0) {
                             this.loadViews(mvcObj.children, mvcObj.medClass, false);
