@@ -48,14 +48,14 @@ export default class GameModel extends BaseModel {
      * 发送消息
      * @param {MessageBase} msg 消息对象 
      */
-    public sendRQ(msg: MessageBase): void {
-        NetHelper.sendRQ(msg);
+    public sendRQ(msg: MessageBase, opt?: any): void {
+        NetHelper.sendRQ(msg, opt);
     }
 
     /**
      * 配置注册的PB消息
      */
-    public protobuf(): Array<{pid: number, cb: (msg: MessageBase) => void}> {
+    public protobuf(): {pid: number, cb: (msg: MessageBase) => void}[] {
         return [];
     }
 

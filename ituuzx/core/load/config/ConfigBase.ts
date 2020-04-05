@@ -43,7 +43,6 @@ export default abstract class ConfigBase {
             }
             res.push(innerArr);
         }
-
         return res;
     }
 
@@ -70,7 +69,7 @@ export default abstract class ConfigBase {
         let res: number[] = [];
         let temp = row.split("|");
         if (temp.length !== 2) {
-            mi.error("数据格式错误：", row);
+            it.error("数据格式错误：", row);
         }
         return cc.v2(Number(temp[0]), Number(temp[1]));
     }

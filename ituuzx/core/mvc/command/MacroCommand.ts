@@ -8,7 +8,7 @@ import SimpleCommand from "./SimpleCommand";
 export default abstract class MacroCommand extends BaseCommand {
 
     /** 组合命令列表 */
-    private _commandList: Array<{cmd: new () => SimpleCommand, body: any}> = [];
+    private _commandList: {cmd: new () => SimpleCommand, body: any}[] = [];
 
     /**
      * 初始化组合命令接口，子类必须实现，用于组合命令。

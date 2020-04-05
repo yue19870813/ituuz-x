@@ -1,3 +1,5 @@
+import { StatsData } from "./sdk/stats/StatsManager";
+
 /**
  * 框架配置，通过init接口初始化这些配置。
  */
@@ -10,4 +12,6 @@ export default class FrameworkCfg {
     public static FIT_HEIGHT: boolean = true;
     /** 是否宽适配 */
     public static FIT_WIDTH: boolean = false;
+    /** banner StatsData */
+    public static BANNER_STATS_DATA: StatsData = null;
 }

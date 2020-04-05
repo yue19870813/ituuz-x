@@ -2,7 +2,7 @@
  * 网络消息处理Helper
  * @author ituuz
  * @description 主要负责网络消息的注册监听，发送，和链接类型管理
- * @warn ️️不要直接调用该类进行消息处理，应使用上层的Model进行处理
+ * @warn ️️⚠️❗️不要直接调用该类进行消息处理，应使用上层的Model进行处理❗️⚠️
  */
 import LogUtil from "../../core/util/LogUtil";
 import HttpClient from "./HttpClient";
@@ -58,7 +58,7 @@ export class NetHelper {
      * @param {new() => NetClientBase} customClient 自定义client类型，可选
      */
     public static init(type: NetType, addr: string, port: number, rsMap: Map<number, new() => MessageBase>,
-                       customClient?: new(addr: string, port: number) => NetClientBase): void {
+                     customClient?: new(addr: string, port: number) => NetClientBase): void {
         NetHelper._INIT = true;
         NetHelper._ADDR = addr;
         NetHelper._PORT = port;
@@ -118,8 +118,8 @@ export class NetHelper {
      * 发送消息
      * @param {MessageBase} msg 消息对象 
      */
-    public static sendRQ(msg: MessageBase): void {
-        NetHelper._CLIENT.sendReq(msg);
+    public static sendRQ(msg: MessageBase, opt?: any): void {
+        NetHelper._CLIENT.sendReq(msg, opt);
     }
 
     /**
@@ -128,6 +128,11 @@ export class NetHelper {
      * @param {(msg: MessageBase) => void} cb 回调
      */
     public static registerRS(id: number, cb: (msg: MessageBase) => void): void {
+        let item = NetHelper._CB_MAP.get(id);
+        if (item) {
+            it.error(`PID = ${id}的协议已经注册过，请检查是否有误!`);
+            return;
+        }
         // 注册
         NetHelper._CB_MAP.set(id, cb);
     }
@@ -140,6 +145,10 @@ export class NetHelper {
         NetHelper._CB_MAP.delete(id);
     }
 
+    /** 移除所有消息注册 */
+    public static removeAllRS(): void {
+        NetHelper._CB_MAP.clear();
+    }
     /**
      * 派发消息
      * @param {number} pid 消息id

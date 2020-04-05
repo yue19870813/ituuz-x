@@ -1,4 +1,3 @@
-import SingleBase from "../../base/SingleBase";
 import JSUtil from "../../util/JSUtil";
 import LogUtil from "../../util/LogUtil";
 import ITResourceLoader from "../loader/ITResourceLoader";
@@ -7,10 +6,11 @@ import ITResourceLoader from "../loader/ITResourceLoader";
  * 静态数据管理器
  * @author ituuz
  */
-export default class ConfigManager extends SingleBase {
+export default class ConfigManager {
 
     private static _instance: ConfigManager = new ConfigManager();
-
+    // 加载路径
+    private _pathRoot: string = "";
     // 待加载的总数量
     private _loadMaxCount: number = 0;
     // 已经加载完成的数量
@@ -25,7 +25,6 @@ export default class ConfigManager extends SingleBase {
     }
 
     private constructor() {
-        super();
     }
 
     /**
@@ -34,12 +33,16 @@ export default class ConfigManager extends SingleBase {
      * @param {(count: number) => void} progressCallback 加载进度回调
      * @param {() => void} finishedCallback 加载完成回调
      */
-    public loadConfList(configList: string[], 
-        progressCallback: (count: number) => void, 
-        finishedCallback: () => void): void {
+    public loadConfList(configList: string[],
+                        progressCallback: (count: number) => void,
+                        finishedCallback: () => void,
+                        pathRoot?: string): void {
         this._loadMaxCount = configList.length;
         this._itemLoadCallback = progressCallback;
         this._loadFinishedCallback = finishedCallback;
+        if (pathRoot) {
+            this._pathRoot = pathRoot;
+        }
         this.startLoad(configList);
     }
 
@@ -49,20 +52,22 @@ export default class ConfigManager extends SingleBase {
             return;
         }
         let item = configList.shift();
-        ITResourceLoader.loadRes("config/" + item, cc.TextAsset, (err, asset: cc.TextAsset) => {
-            if (err) {
-                LogUtil.warn(err);
-            } else {
-                // 将字符串实例化成对象
-                JSUtil.importCls(item).then((cls) => {
+        // 将字符串实例化成对象
+        JSUtil.importCls(item).then((cls) => {
+            ITResourceLoader.loadRes(this._pathRoot + cls.path(), cc.TextAsset, (err, asset: cc.TextAsset) => {
+                if (err) {
+                    LogUtil.error(err);
+                } else {
                     cls.loadData(asset.text);
-                    this._itemLoadCallback && this._itemLoadCallback(++this._loadCount);
+                    if (this._itemLoadCallback) { this._itemLoadCallback(++this._loadCount); }
                     if (this._loadCount >= this._loadMaxCount) {
-                        this._loadFinishedCallback && this._loadFinishedCallback();
+                        if (this._loadFinishedCallback) { this._loadFinishedCallback(); }
+                        this._loadCount = 0;
+                        return;
                     }
                     this.startLoad(configList);
-                });
-            }
+                }
+            });
         });
     }
 
@@ -72,14 +77,14 @@ export default class ConfigManager extends SingleBase {
      * @param {() => void} finishedCallback 加载完成回调 
      */
     public loadConfig(name: string, finishedCallback: () => void): void {
-        ITResourceLoader.loadRes("config/" + name, cc.TextAsset, (err, asset: cc.TextAsset) => {
+        ITResourceLoader.loadRes(this._pathRoot + name, cc.TextAsset, (err, asset: cc.TextAsset) => {
             if (err) {
-                LogUtil.warn(err);
+                LogUtil.error(err);
             } else {
                 // 将字符串实例化成对象
                 JSUtil.importCls(name).then((cls) => {
                     cls.loadData(asset.text);
-                    finishedCallback && finishedCallback();
+                    if (finishedCallback) { finishedCallback(); }
                 });
             }
         });
@@ -92,12 +97,13 @@ export default class ConfigManager extends SingleBase {
     public releaseConfig(name: string): void {
         // 将字符串实例化成对象
         JSUtil.importCls(name).then((cls) => {
-            cls["_itemDataList"] = null;
-            cls["_itemDataMap"] = null;
+            cls._itemDataList = null;
+            cls._itemDataMap = null;
         });
     }
 }
 
 // 将接口导出
-(<any>window).it || ((<any>window).it = {});
-(<any>window).it.ConfigManager = ConfigManager;
+// tslint:disable-next-line: no-unused-expression
+(window as any).it || ((window as any).it = {});
+(window as any).it.ConfigManager = ConfigManager;

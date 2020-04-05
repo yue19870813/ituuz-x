@@ -1,8 +1,9 @@
 import SimpleCommand from "../../core/mvc/command/SimpleCommand";
 import { Facade } from "../../core/mvc/Facade";
+import NotificationManager from "../../core/mvc/manager/NotificationManager";
 import JSUtil from "../../core/util/JSUtil";
-import { MVC_struct, MVC_scene } from "../../Framework";
-import FrameworkCfg from "../../FrameworkCfg";
+import { MVC_scene, MVC_struct } from "../../Framework";
+import { AdManager } from "../../sdk/ad/AdManager";
 import GameMediator from "../base/GameMediator";
 import GameScene from "../base/GameScene";
 import GameView from "../base/GameView";
@@ -37,11 +38,25 @@ export default class LoadLayersCmd extends SimpleCommand {
             return JSUtil.importCls(mvc.medClass);
         }).then((medModule) => {
             if (JSUtil.isChildClassOf(viewModule, GameScene)) {
-                Facade.getInstance().runScene(medModule,
+                let mediator = Facade.getInstance().runScene(medModule,
                     viewModule, data, (med: GameMediator) => {
                         loadViewChildren(true);
+                        if ((mvc as MVC_scene).showBanner) {
+                            med.view.isShowBanner = true;
+                            // 打开banner广告
+                            AdManager.showBanner(() => {
+                                it.log(`##banner## - 场景${mvc.viewClass}打开banner`);
+                                // 记录banner广告日志
+                                NotificationManager.getInstance().__sendNotification__("__OPEN_BANNER_NOTI__", mvc.viewClass);
+                            });
+                        }
                     }
-                );
+                ) as GameMediator;
+                // 开始显示loading
+                if ((mvc as MVC_scene).showLoading) {
+                    let loadingView = LoadingManager.show();
+                    mediator.onLoadingShow(loadingView);
+                }
             } else {
                 loadViewChildren(false);
             }
@@ -76,6 +91,9 @@ export default class LoadLayersCmd extends SimpleCommand {
                     return JSUtil.importCls(mvcObj.medClass);
                 }).then((medModule) => {
                     Facade.getInstance().addLayer(medModule, viewModule, mvcObj.medClass, i, null, (view: GameView) => {
+                        if (mvcObj.showBanner) {
+                            view.isShowBanner = true;
+                        }
                         // 加载完成后的回调,递归加载childern
                         if (mvcObj.children && mvcObj.children.length > 0) {
                             this.loadViews(mvcObj.children, mvcObj.medClass, false);

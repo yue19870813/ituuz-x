@@ -20,15 +20,21 @@ export default class LanguageUtil {
     private static _languageCfg: new () => ConfigBase;
     /** 初始化当前语言 */
     public static init(lan: string, cfg: new () => ConfigBase): void {
-        let localLan = cc.sys.localStorage.getItem("ituuz_language");
+        let localLan = cc.sys.localStorage.getItem("T_language");
         if (localLan && localLan !== "") {
             LanguageUtil.CUR_LAN = localLan;
             LanguageUtil._languageCfg = cfg;
             it.log("local当前语言 ====>>>> ", localLan);
             return;
         }
-
-        LanguageUtil.CUR_LAN = lan;
+        it.log("传入的默认语言是：", lan);
+        if (lan === "zh_cn") {
+            LanguageUtil.CUR_LAN = LanguageType.ZH_CN;
+        } else if (lan === "zh_tw") {
+            LanguageUtil.CUR_LAN = LanguageType.ZH_TW;
+        } else {
+            LanguageUtil.CUR_LAN = LanguageType.EN;
+        }
         LanguageUtil._languageCfg = cfg;
         it.log("device当前语言 ====>>>> ", lan);
     }
@@ -52,11 +58,11 @@ export default class LanguageUtil {
                     return str;
                 }
             } else {
-                it.warn(`[mi warn]: The language type:${LanguageUtil.CUR_LAN} isn't in language data`);
+                it.warn(`[it warn]: The language type:${LanguageUtil.CUR_LAN} isn't in language data`);
                 return key;
             }
         } else {
-            it.warn(`[mi warn]:Language data is none for ${key}!`);
+            it.warn(`[it warn]:Language data is none for ${key}!`);
             return key;
         }
     }

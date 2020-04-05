@@ -42,7 +42,7 @@ export default class HotUpdateUtils {
         HotUpdateUtils._versionCode = versionCode;
         HotUpdateUtils._searchPath = searchPath;
         // 设置存储目录
-        HotUpdateUtils._storagePath = ((jsb.fileUtils ? jsb.fileUtils.getWritablePath() + searchPath + "/" : searchPath + "/it"));
+        HotUpdateUtils._storagePath = ((jsb.fileUtils ? jsb.fileUtils.getWritablePath() + searchPath + "/" : searchPath + "/fs"));
 
         /** 版本对比接口 */
         let versionCompareHandle = (versionA, versionB) => {
@@ -56,6 +56,7 @@ export default class HotUpdateUtils {
         };
 
         // Init with empty manifest url for testing custom manifest
+        // @ts-ignore
         HotUpdateUtils._am = new jsb.AssetsManager("", HotUpdateUtils._storagePath, versionCompareHandle);
 
         // Return true if the verification passed, otherwise return false
@@ -83,7 +84,9 @@ export default class HotUpdateUtils {
             it.log("[hot_update]Max concurrent tasks count have been limited to 2");
         }
         // 加载自定义的manifest文件
+        // @ts-ignore
         if (this._am.getState() === jsb.AssetsManager.State.UNINITED) {
+            // @ts-ignore
             let manifest = new jsb.Manifest(customManifestStr, this._storagePath);
             this._am.loadLocalManifest(manifest, this._storagePath);
             it.log("[hot_update]Using custom manifest");
@@ -116,19 +119,24 @@ export default class HotUpdateUtils {
     private static checkCb(event: any): void {
         it.log("[hot_update]Code: " + event.getEventCode());
         switch (event.getEventCode()) {
+            // @ts-ignore
             case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
                 it.log("[hot_update]No local manifest file found, hot update skipped.");
                 if (HotUpdateUtils._checkFailCB) { HotUpdateUtils._checkFailCB(); }
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.ERROR_DOWNLOAD_MANIFEST:
+            // @ts-ignore
             case jsb.EventAssetsManager.ERROR_PARSE_MANIFEST:
                 it.log("[hot_update]Fail to download manifest file, hot update skipped2.");
                 if (HotUpdateUtils._checkFailCB) { HotUpdateUtils._checkFailCB(); }
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.ALREADY_UP_TO_DATE:
                 it.log("[hot_update]4:Already up to date with the latest remote version.");
                 if (HotUpdateUtils._checkSuccessCB) { HotUpdateUtils._checkSuccessCB(HotUpdateEnum.UP_TO_DATE); }
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.NEW_VERSION_FOUND:
                 it.log("[hot_update]New version found, please try to update.");
                 if (HotUpdateUtils._checkSuccessCB) { HotUpdateUtils._checkSuccessCB(HotUpdateEnum.NEW_VERSION); }
@@ -153,8 +161,11 @@ export default class HotUpdateUtils {
                 it.log("[hot_update]===>>> Failed to load local manifest ...");
                 return;
             }
+            // @ts-ignore
             it.log("[hot_update]this._am.getState() = ", this._am.getState(), jsb.AssetsManager.State.UNINITED);
+            // @ts-ignore
             if (this._am.getState() === jsb.AssetsManager.State.UNINITED) {
+                // @ts-ignore
                 let manifest = new jsb.Manifest(HotUpdateUtils._customManifestStr, this._storagePath);
                 this._am.loadLocalManifest(manifest, this._storagePath);
                 it.log("[hot_update]Using custom manifest");
@@ -173,10 +184,12 @@ export default class HotUpdateUtils {
         let needRestart = false;
         let failed = false;
         switch (event.getEventCode()) {
+            // @ts-ignore
             case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
                 it.log("[hot_update]No local manifest file found, hot update skipped.");
                 failed = true;
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.UPDATE_PROGRESSION:
                 let loadFiles = event.getDownloadedFiles();
                 let totalFiles = event.getTotalFiles();
@@ -185,28 +198,35 @@ export default class HotUpdateUtils {
                     HotUpdateUtils._progressCB(loadFiles, totalFiles);
                 }
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.ERROR_DOWNLOAD_MANIFEST:
+            // @ts-ignore
             case jsb.EventAssetsManager.ERROR_PARSE_MANIFEST:
                 it.log("[hot_update]Fail to download manifest file, hot update skipped1.");
                 failed = true;
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.ALREADY_UP_TO_DATE:
                 it.log("[hot_update]Already up to date with the latest remote version.");
                 failed = true;
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.UPDATE_FINISHED:
                 it.log("[hot_update]Update finished. " + event.getMessage());
                 needRestart = true;
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.UPDATE_FAILED:
                 it.log("[hot_update]Update failed. " + event.getMessage());
                 HotUpdateUtils._updating = false;
                 HotUpdateUtils._canRetry = true;
                 failed = true;
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.ERROR_UPDATING:
                 it.log("[hot_update]Asset update error: " + event.getAssetId() + ", " + event.getMessage());
                 break;
+            // @ts-ignore
             case jsb.EventAssetsManager.ERROR_DECOMPRESS:
                 it.log("[hot_update]" + event.getMessage());
                 break;
@@ -224,9 +244,12 @@ export default class HotUpdateUtils {
         }
         // 更新成功
         if (needRestart) {
+            // @ts-ignore
             let searchPaths = jsb.fileUtils.getSearchPaths();
             let newPaths = this._am.getLocalManifest().getSearchPaths();
+            it.log("[hot_update]updateCb newPaths =", JSON.stringify(newPaths));
             Array.prototype.unshift.apply(searchPaths, newPaths);
+            it.log("[hot_update]updateCb newPaths2 =", JSON.stringify(searchPaths));
             cc.sys.localStorage.setItem(HotUpdateUtils._searchPath, JSON.stringify(searchPaths));
             jsb.fileUtils.setSearchPaths(searchPaths);
             if (HotUpdateUtils._finishedCB) {
