@@ -11,6 +11,7 @@ export default abstract class AsyncMacroCommand extends MacroCommand {
      * 异步执行组合命令
      */
     private asyncExecute(): void {
+        // tslint:disable-next-line: no-string-literal
         let cmdList = this["_commandList"];
         for (let cmd of cmdList) {
             let tempCmd = new cmd.cmd();
@@ -22,6 +23,7 @@ export default abstract class AsyncMacroCommand extends MacroCommand {
      * 异步撤销组合命令
      */
     private asyncUndo(): void {
+        // tslint:disable-next-line: no-string-literal
         let cmdList = this["_commandList"];
         for (let cmd of cmdList) {
             let tempCmd = new cmd.cmd();

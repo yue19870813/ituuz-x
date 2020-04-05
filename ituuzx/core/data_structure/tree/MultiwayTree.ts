@@ -1,14 +1,14 @@
 import TreeNode from "./TreeNode";
 
 export default class MultiwayTree {
-    
+
     public _root: TreeNode;
 
     public constructor() {
         this._root = null;
     }
 
-    //深度优先遍历
+    // 深度优先遍历
     public traverseDF(callback) {
         let stack = [];
         let found = false;
@@ -23,7 +23,7 @@ export default class MultiwayTree {
         }
 
     }
-    //广度优先遍历
+    // 广度优先遍历
     public traverseBF(callback) {
         let queue = [];
         let found = false;
@@ -47,7 +47,8 @@ export default class MultiwayTree {
             return this;
         }
         let parent = null;
-        let callback = function(node) {
+        // tslint:disable-next-line: no-shadowed-variable
+        let callback = (node: any) => {
             if (node.data === toData) {
                 parent = node;
                 return true;
@@ -84,7 +85,7 @@ export default class MultiwayTree {
             }
         };
 
-        this.contains(callback, traversal);    
+        this.contains(callback, traversal);
         if (parent) {
             let index = this._findIndex(parent.children, data);
             if (index < 0) {

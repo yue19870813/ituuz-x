@@ -1,9 +1,14 @@
+import AtlasManager from "./core/load/atlas/AtlasManager";
 import BaseModel from "./core/mvc/base/BaseModel";
 import { Facade } from "./core/mvc/Facade";
 import CommandManager from "./core/mvc/manager/CommandManager";
+import ModelManager from "./core/mvc/manager/ModelManager";
 import { ViewManager } from "./core/mvc/manager/ViewManager";
 import AudioUtil from "./core/util/AudioUtil";
+import FrameworkCfg from "./FrameworkCfg";
 import LoadLayersCmd from "./mvc_ex/command/LoadLayersCmd";
+import { StatsData } from "./sdk/stats/StatsManager";
+import { NetHelper } from "./extension/net/NetHelper";
 
 /**
  * 框架煮类，用户初始化框架以及提供一些框架级别的接口。
@@ -35,11 +40,13 @@ export default class Framework {
         cc.game.on(cc.game.EVENT_SHOW, () => {
             it.log("== Framework cc.game.EVENT_SHOW ==");
             ViewManager.getInstance().showOrHide("show");
+            AudioUtil.setPauseFlag(false);
         });
         // 监听游戏进入后台
         cc.game.on(cc.game.EVENT_HIDE, () => {
             it.log("== Framework cc.game.EVENT_HIDE ==");
             ViewManager.getInstance().showOrHide("hide");
+            AudioUtil.setPauseFlag(true);
         });
     }
 
@@ -61,6 +68,24 @@ export default class Framework {
         return Facade.getInstance().getModel(model);
     }
 
+    /** 设置banner广告播放时记录的日志内容 */
+    public static setBannerStatsData(stats: StatsData): void {
+        FrameworkCfg.BANNER_STATS_DATA = stats;
+    }
+
+    /** 重启游戏接口 */
+    public static restartGame(): void {
+        ViewManager.getInstance().destroy();
+        ModelManager.getInstance().removeAllModel();
+        AtlasManager.destroy();
+        NetHelper.removeAllRS();
+        AudioUtil.stopMusic();
+        cc.director.pause();
+        setTimeout(() => {
+            cc.director.resume();
+            cc.game.restart();
+        }, 1000);
+    }
 }
 
 /** 一个者UI层的配置结构 */
@@ -68,6 +93,7 @@ export class MVC_struct {
     public viewClass: string;
     public medClass: string;
     public children: MVC_struct[];
+    public showBanner: boolean = false;
 }
 
 /** 一个场景配置结构对象 */
@@ -76,9 +102,11 @@ export class MVC_scene {
     public medClass: string;
     public children: MVC_struct[];
     public model: string[];
+    public showLoading: boolean = false;
+    public showBanner: boolean = false;
 }
 
 // 将接口导出
-(<any>window).mi || ((<any>window).mi = {});
-(<any>window).mi.Framework = Framework;
+(<any>window).it || ((<any>window).it = {});
+(<any>window).it.Framework = Framework;
 

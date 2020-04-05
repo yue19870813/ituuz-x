@@ -58,9 +58,9 @@ export default class HttpClient extends NetClientBase {
         // let len = recvView.getInt32(HttpClient.PROTOCOLTYPE_LEN);
         let data = recvBuf.slice(HttpClient.DATA_TOTAL_LEN + HttpClient.PROTOCOLTYPE_LEN, recvBuf.byteLength);
         let cls = NetHelper.getMessageCls(PID);
-        let msg: MessageBase = new cls();
-        msg.parseBuffer(data);
-        NetHelper.dispatcher(PID, msg);
+        let msg: MessageBase = (cls as any).create(() => {
+            msg.parseBuffer(data);
+        });
     }
 
     public connect(succCB: () => void, faultCB: (code: NetFailCode) => void): void {

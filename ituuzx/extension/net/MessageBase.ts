@@ -1,9 +1,9 @@
 /**
- * 消息协议基类，声明的pb文件会生成对应的message类文件供业务使用。
+ * 消息协议基类
  * @author ituuz
  */
 export default class MessageBase {
-    
+
     public static create(cb: (msg: MessageBase) => void) {
 
     }

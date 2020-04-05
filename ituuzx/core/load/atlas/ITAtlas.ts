@@ -8,13 +8,13 @@ export default class ITUIAtlas {
     private _atlasMap: Map<string, ITAtlas> = new Map<string, ITAtlas>();
 
     public constructor() {
-        
+
     }
 
     /**
      * 添加该UI需要加载的atlas资源
      * @param {string} key 资源key值，默认就是图集的路径。
-     * @param {ITAtlas} atlas 图集对象
+     * @param {MiAtlas} atlas 图集对象
      */
     public addAtlas(key: string, atlas: ITAtlas): void {
         this._atlasMap.set(key, atlas);
@@ -53,7 +53,7 @@ export default class ITUIAtlas {
 
 /**
  * 单个图集对象
- * @author ituuz
+ * @author Yue
  */
 export class ITAtlas {
     /** 该图集是否加载完成 */
@@ -79,11 +79,11 @@ export class ITAtlas {
      */
     private cacheLoad(name: string, callback: (err, frame) => void): void {
         if (this._loadError) {
-            LogUtil.warn(`atlas [${this._url}] load failed`);            
+            LogUtil.warn(`atlas [${this._url}] load failed`);
         } else {
             let frame = this._atlas.getSpriteFrame(name);
             if (frame) {
-                callback && callback(null, frame);
+                if( callback) { callback(null, frame); }
             } else {
                 LogUtil.warn(`spriteframe [${name}] not found in atlas [${this._url}]`);
             }
@@ -99,10 +99,10 @@ export class ITAtlas {
         if (this._loaded) {
             this.cacheLoad(name, callback);
         } else {
-            this._spritePipe.push({name: name, callback: callback});
+            this._spritePipe.push({name, callback});
         }
     }
-    
+
     /**
      * 为sprite设置纹理
      * @param {cc.Sprite} sprite sprite组件对象

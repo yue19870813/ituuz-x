@@ -1,7 +1,3 @@
-/**
- * mvc总接口调用类
- * @author ituuz
- */
 import FrameworkCfg from "../../FrameworkCfg";
 import BaseCommand from "./base/BaseCommand";
 import BaseMediator from "./base/BaseMediator";
@@ -148,3 +144,33 @@ export class Facade {
     appFacade: Facade.getInstance()
 };
 
+// 创建全局UI事件列表容器，用于缓存Mediator中监听的View事件列表
+// tslint:disable-next-line: no-unused-expression
+(window as any).__ViewEventList__ || ((window as any).__ViewEventList__ = new Map());
+
+// ---------------------- 装饰器声明 --------------------------
+it.log("----------------- 装饰器声明 --------------------------");
+/**
+ * 监听View事件装饰器
+ * @param {string} params View事件名称
+ */
+function addviewevent(params: string) {
+    // it.log(params) // 装饰器传入的参数
+    return (target: any, methodName:any, desc:any) => {
+        // 获取类名
+        let clsName = target.constructor.name;
+        // 保存类及回调函数
+        let map = ((window as any).__ViewEventList__ as Map<string, {key: string, func: string}[]>);
+        let data = map.get(clsName);
+        if (data) {
+            data.push({key: params, func: methodName});
+        } else {
+            let arr = [];
+            arr.push({key: params, func: methodName});
+            map.set(clsName, arr);
+        }
+        // it.log(`监听View事件装饰器-类名 = ${clsName}, 事件名称 = ${params}`);
+    }
+}
+
+(window as any).addviewevent = addviewevent;

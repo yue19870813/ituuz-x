@@ -15,7 +15,7 @@ export default class JSUtil {
                 if (module && module.default) {
                     resolve(module.default);
                 } else {
-                    mi.error(cls, "中没有default类.");
+                    it.error(cls, "中没有default类.");
                     reject(module);
                 }
             });

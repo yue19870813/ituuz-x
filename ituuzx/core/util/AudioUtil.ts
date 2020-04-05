@@ -1,6 +1,6 @@
 /**
  * 音频工具类
- * @author Yue
+ * @author ituuz
  * @description 主要负责音乐、音效的播放、暂停和停止逻辑，包括缓存。
  */
 
@@ -27,6 +27,8 @@ export default class AudioUtil {
     private static _lastSoundTime: number = 0;
     /** 是否暂停所有音效 */
     private static _pauseFlag: boolean = false;
+    /** 当前音频状态级别，数字越大越高 配合_pauseFlag判断 */
+    private static _level: number = 0;
 
     /**
      * 播放音效
@@ -139,8 +141,10 @@ export default class AudioUtil {
     /**
      * 设置暂停所有音效标志
      * @param {boolean} flag 标志 true-暂停  false-恢复
+     * @param {number} level 设置状态级别，数字越大级别越高，高级别逻辑覆盖低级别，低级别不能覆盖高级别。
      */
-    public static setPauseFlag(flag: boolean): void {
+    public static setPauseFlag(flag: boolean, level: number = 0): void {
+        AudioUtil._level = level;
         AudioUtil._pauseFlag = flag;
         if (flag) {
             if (AudioUtil._curMusic) { AudioUtil._curMusic.pause(); }

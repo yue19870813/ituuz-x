@@ -30,7 +30,9 @@ export default class AtlasManager {
             itAtlas = new ITAtlas(path);
             this._atlasMap.set(path, itAtlas);
             ITResourceLoader.loadRes(path, cc.SpriteAtlas, (err, atlas) => {
+                // tslint:disable-next-line: no-string-literal
                 itAtlas["atlasLoaded"](err, atlas);
+                // tslint:disable-next-line: no-unused-expression
                 callback && callback(err, atlas);
             });
         }
@@ -57,5 +59,10 @@ export default class AtlasManager {
             LogUtil.log(`[AtlasManager] atlas(${path})引用为0，释放!`);
             // TODO 依赖释放逻辑，同时需要分析编辑器里引用到的纹理关系，进行释放。
         }
+    }
+
+    public static destroy(): void {
+        AtlasManager._atlasMap.clear();
+        AtlasManager._atlasCounter.clear();
     }
 }

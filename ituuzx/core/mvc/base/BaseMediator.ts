@@ -1,12 +1,11 @@
 import { Facade } from "../Facade";
 import CommandManager from "../manager/CommandManager";
 import NotificationManager from "../manager/NotificationManager";
+import { ViewManager } from "../manager/ViewManager";
 import BaseCommand from "./BaseCommand";
 import BaseModel from "./BaseModel";
-import BaseScene from "./BaseScene";
 import { BaseView } from "./BaseView";
 import GameContent from "./GameContent";
-import { ViewManager } from "../manager/ViewManager";
 
 /**
  * 视图中介者基类
@@ -107,42 +106,11 @@ export default abstract class BaseMediator {
     }
 
     /**
-     * 打开新场景
-     * @param mediator 
-     * @param view 
-     * @param data {Object} data 自定义的任意类型透传数据。（可选）
-     */
-    public runScene(mediator: new() => BaseMediator, view: new() => BaseScene, data?: any): void {
-        Facade.getInstance().runScene(mediator, view, data);
-    }
-
-    /**
      * 返回上一场景
      * @returns {boolean}是否存在上一个场景
      */
     public backScene(): boolean {
         return Facade.getInstance().backScene();
-    }
-
-    /**
-     * 打开view界面
-     * @param {{new(): BaseMediator}} mediator 界面mediator类型，类类型。
-     * @param {{new(): BaseView}} view view 场景mediator类型，类类型。
-     * @param {Object} data 自定义的任意类型透传数据。（可选）
-     */
-    public popView(mediator: new() => BaseMediator, view: new() => BaseView, data?: any): void {
-        Facade.getInstance().popView(mediator, view, data);
-    }
-
-    /**
-     * 添加层级
-     * @param {{new(): BaseMediator}} mediator 界面mediator类型，类类型。
-     * @param {{new(): BaseView}} view view 场景mediator类型，类类型。
-     * @param {number} zOrder 层级。（可选）
-     * @param {Object} data 自定义的任意类型透传数据。（可选）
-     */
-    public addLayer(mediator: new() => BaseMediator, view: new() => BaseView, zOrder?: number, data?: any): void {
-        Facade.getInstance().addLayer(mediator, view, "", zOrder, data);
     }
 
     /**
