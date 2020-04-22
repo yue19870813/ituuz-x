@@ -40,7 +40,6 @@ export default class ArrayUtil {
             }
             newList.push(o);
         }
-
         return newList;
     }
 
@@ -52,7 +51,7 @@ export default class ArrayUtil {
     public static listAddList(list1: number[], list2: number[]): number[] {
         let newList: number[] = [];
         if (list1.length !== list2.length) {
-            mi.warn("两个数组长度不同，不能相加。");
+            it.warn("两个数组长度不同，不能相加。");
             return null;
         }
         for (let i = 0; i < list1.length; i++) {

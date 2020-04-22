@@ -1,4 +1,5 @@
 import { BaseView } from "../mvc/base/BaseView";
+// import FsAudioUtil from "../../../script/utils/FsAudioUtils";
 
 /**
  * UIUtils:解析UI节点工具类
@@ -73,23 +74,37 @@ export class UIContainer {
     }
 
     /**
-     * 发送点击事件
-     * @param {cc.Node | string} node 事件节点
-     * @param {string} event 事件名称
-     * @param {any} param 事件参数（可选）
+     * 注册或发送点击事件，默认带点击音效
+     * @param {cc.Node | string} node 事件节点  
+     * @param {string | (event: any) => void} handler 事件名称 | 事件回调函数 
+     * @param {any} target 目标 
+     * @param {any} param 参数 
+     * @param {string} sound 声音，有默认 
      */
-    public addClickEvent(node: cc.Node | string, event: string, param?: any, target?: any): void {
-        if (node) {
-            let tempNode: cc.Node = null;
-            if (typeof node === "string") {
-                tempNode = this.getNode(node);
-            } else {
-                tempNode = node;
-            }
-            tempNode.on(cc.Node.EventType.TOUCH_END, () => {
-                this._target.sendEvent(event, param);
-            }, target);
+    public onClick<T extends (event: any) => void>(node: cc.Node | string, handler: string | T, target?: any, param?: any, sound?: string): void {
+        if (!node) {
+            it.warn(`onClick参数node不能为空：${node}`);
+            return;
         }
+        let tempNode: cc.Node = null;
+        if (typeof node === "string") {
+            tempNode = this.getNode(node);
+        } else {
+            tempNode = node;
+        }
+        tempNode.on(cc.Node.EventType.TOUCH_END, (event) => {
+            // 播放音效
+            if (sound) {
+                // FsAudioUtil.playEffect(sound);
+            } else {
+                // FsAudioUtil.playEffect("common_button");
+            }
+            if (typeof handler === "string") {
+                this._target.sendEvent(handler, param);
+            } else {
+                if (handler) { handler.apply(target, event); }
+            }
+        }, target);
     }
 }
 

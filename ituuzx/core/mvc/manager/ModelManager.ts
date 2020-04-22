@@ -42,7 +42,7 @@ export default class ModelManager {
     public registerModel(model: new () => BaseModel): void {
         let key = model;
         if (this._modelList.get(key)) {
-            console.log(key, "已经存在，不可重复注册！");
+            it.log(key, "已经存在，不可重复注册！");
         } else {
             let m = new model();
             m.__init__();
@@ -61,7 +61,7 @@ export default class ModelManager {
             m.clear();
             this._modelList.delete(key);
         } else {
-            console.warn(key, "不存在！");
+            it.warn(key, "不存在！");
         }
     }
 
@@ -70,12 +70,13 @@ export default class ModelManager {
      */
     public removeAllModel(): void {
         //  释放并移除所有model
+        // tslint:disable-next-line: forin
         for (let key in this._modelList) {
             let model: BaseModel = this._modelList[key];
             model.clear();
             this._modelList.delete(key);
         }
-        this._modelList = null;
+        this._modelList.clear();
     }
 
     /** 清理所有model */
@@ -99,4 +100,5 @@ export default class ModelManager {
             }
         }
     }
+
 }

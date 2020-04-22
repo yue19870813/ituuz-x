@@ -1,13 +1,14 @@
 import LogUtil from "../../util/LogUtil";
 import AtlasLoader from "./base/AtlasLoader";
+import AudioLoader from "./base/AudioLoader";
 import BaseLoader from "./base/BaseLoader";
 import ImageLoader from "./base/ImageLoader";
+import JsonLoader from "./base/JsonLoader";
 import PrefabLoader from "./base/PrefabLoader";
 import TextLoader from "./base/TextLoader";
-import JsonLoader from "./base/JsonLoader";
 
 export default class ITResourceLoader {
-    
+
     // 加载器map集合
     private static _defaultMap: Map<{prototype: cc.Asset}, BaseLoader>;
 
@@ -17,6 +18,7 @@ export default class ITResourceLoader {
     private static _prefabLoader: PrefabLoader = new PrefabLoader();
     private static _textLoader: TextLoader = new TextLoader();
     private static _jsonLoader: JsonLoader = new JsonLoader();
+    private static _audioLoader: AudioLoader = new AudioLoader();
 
     public static init(): void {
         // 初始化加载器map
@@ -32,6 +34,8 @@ export default class ITResourceLoader {
         ITResourceLoader._defaultMap.set(cc.TextAsset, ITResourceLoader._textLoader);
         // json loader
         ITResourceLoader._defaultMap.set(cc.JsonAsset, ITResourceLoader._jsonLoader);
+        // audio loader
+        ITResourceLoader._defaultMap.set(cc.AudioClip, ITResourceLoader._audioLoader);
         // TODO dragonbone loader
         // TODO spine loader
         // TODO tilemap loader
@@ -53,11 +57,56 @@ export default class ITResourceLoader {
             cc.loader.loadRes(path, type, callback);
         }
     }
+
+    /**
+     * 加载资源列表
+     * @param list 
+     * @param processCB 
+     * @param succCB 
+     */
+    public static loadResList(list: {url: string, type: cc.Asset}[], processCB: () => void, succCB: () => void): void {
+        if (!list || list.length <= 0) {
+            if (succCB) { succCB(); }
+            return;
+        }
+        // 开始加载资源
+        ITResourceLoader._loadResList(list, processCB, succCB);
+    }
+
+    private static _loadResList(list: {url: string, type: cc.Asset}[], processCB: () => void, succCB: () => void): void {
+        if (list.length <= 0) {
+            if (succCB) { succCB(); }
+            return;
+        }
+        let resItem = list.shift();
+        ITResourceLoader.loadRes(resItem.url, resItem.type as any, () => {
+            if (processCB) {
+                processCB();
+            }
+            ITResourceLoader._loadResList(list, processCB, succCB);
+        });
+    }
+
+    /**
+     * 加载prefab
+     * @param {string} path prefab路径
+     */
+    public static async loadPrefab(path: string) {
+        return new Promise<any>((resolve, reject) => {
+            it.loader.loadRes(path, cc.Prefab, (err, res) => {
+                if (err) {
+                    it.error(err);
+                }
+                resolve(cc.instantiate(res));
+            });
+        });
+    }
 }
 
 // 默认初始化加载器管理类
 ITResourceLoader.init();
 
 // 将接口导出
-(<any>window).it || ((<any>window).it = {});
-(<any>window).it.loader = ITResourceLoader;
+// tslint:disable-next-line: no-unused-expression
+(window as any).it || ((window as any).it = {});
+(window as any).it.loader = ITResourceLoader;

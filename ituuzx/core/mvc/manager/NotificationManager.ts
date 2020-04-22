@@ -50,6 +50,7 @@ export default class NotificationManager {
      * @param {Object} body 消息传递的参数
      */
     private loopMap(list: BaseMediator[], noti: string | number, body?: any): void {
+        // 待优化，根据UI注册和反注册逻辑，暂时没有
         for (let med of list) {
             if (med == null || med === undefined) {
                 continue;
@@ -62,7 +63,7 @@ export default class NotificationManager {
                     notiObj.cb.call(notiObj.target, body);
                 }
             } catch (e) {
-                mi.error(e);
+                it.error(e);
             }
         }
     }

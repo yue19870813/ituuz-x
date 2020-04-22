@@ -3,7 +3,6 @@
  * @author ituuz
  */
 export default abstract class BaseLoader {
-    
     /**
      * 资源统一加载接口
      * @param {string} path 资源路径

@@ -12,15 +12,18 @@
  * // 使用如下接口来为sprite设置纹理
  * setSpriteFrame(sprite, "atlasPath1");
  */
-import { BaseView } from "../../core/mvc/base/BaseView";
-import ITUIAtlas from "../../core/load/atlas/ITAtlas";
 import AtlasManager from "../../core/load/atlas/AtlasManager";
+import ITUIAtlas from "../../core/load/atlas/ITAtlas";
+import { BaseView } from "../../core/mvc/base/BaseView";
+import NotificationManager from "../../core/mvc/manager/NotificationManager";
 import { ViewManager } from "../../core/mvc/manager/ViewManager";
+import { AdManager } from "../../sdk/ad/AdManager";
 
 export default class GameView extends BaseView {
     /** 用于获取纹理贴图对象 */
     private _uiAtlas: ITUIAtlas;
-
+    /** 当前view是否显示banner广告 */
+    public isShowBanner: boolean = false;
     /** @override */
     public __init__(): void {
         super.__init__();
@@ -71,6 +74,47 @@ export default class GameView extends BaseView {
         for (let k of keyList) {
             AtlasManager.releaseAtlas(k);
         }
+        // 关闭banner。
+        this.__closeBanner__();
+    }
+
+    public __closeBanner__(): void {
+        let popList = ViewManager.getInstance().popViewList;
+        if (this.isShowBanner) {
+            if (popList.length > 0) {
+                if (!(popList[popList.length - 1].view as GameView).isShowBanner) {
+                    AdManager.closeBanner();
+                    return;
+                }
+            }
+            let curScene = ViewManager.getInstance().curScene;
+            if (curScene && curScene.view) {
+                if (!(curScene.view as GameView).isShowBanner) {
+                    AdManager.closeBanner();
+                }
+            }
+        } else {
+            if (popList.length > 0) {
+                if ((popList[popList.length - 1].view as GameView).isShowBanner) {
+                    AdManager.showBanner(() => {
+                        NotificationManager.getInstance().__sendNotification__("__OPEN_BANNER_NOTI__", popList[popList.length - 1].medName);
+                    });
+                    return;
+                }
+            }
+            let curScene = ViewManager.getInstance().curScene;
+            if (curScene && curScene.view) {
+                if ((curScene.view as GameView).isShowBanner) {
+                    AdManager.showBanner(() => {
+                        NotificationManager.getInstance().__sendNotification__("__OPEN_BANNER_NOTI__", popList[popList.length - 1].medName);
+                    });
+                }
+            }
+        }
+    }
+
+    /** @override */
+    public onClose(): void {
     }
 
     /** @override */

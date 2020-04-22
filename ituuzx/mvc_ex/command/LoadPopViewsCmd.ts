@@ -3,6 +3,7 @@ import { Facade } from "../../core/mvc/Facade";
 import JSUtil from "../../core/util/JSUtil";
 import { MVC_struct } from "../../Framework";
 import GameView from "../base/GameView";
+import PopViewManager from "../manager/PopViewManager";
 
 /**
  * 根据配置加载场景或者view的命令。
@@ -11,10 +12,6 @@ import GameView from "../base/GameView";
 export default class LoadPopViewsCmd extends SimpleCommand {
     /** 是否是在弹出view过程 */
     public static IN_POP_VIEW_STATUS: boolean = false;
-
-    public undo(body?: any): void {
-        throw new Error("Method not implemented.");
-    }
 
     public execute(body?: any): void {
         // if (LoadPopViewsCmd.IN_POP_VIEW_STATUS) {
@@ -56,5 +53,21 @@ export default class LoadPopViewsCmd extends SimpleCommand {
         } else {
             LoadPopViewsCmd.IN_POP_VIEW_STATUS = false;
         }
+        let option = body.option;
+        let immediate = false;
+        if (option) {
+            immediate = option.immediate;
+        }
+        if (immediate) {
+            // 立即弹出界面，没有时间间隔
+            PopViewManager.popViewImmediate([body.mvc], body.data, body.parent, body.useCache);
+        } else {
+            // 调用弹出view, 此接口同时只支持弹出一个界面，有500毫秒间隔
+            PopViewManager.popView([body.mvc], body.data, body.parent, body.useCache);
+        }
+    }
+
+    public undo(body?: any): void {
+        throw new Error("Method not implemented.");
     }
 }

@@ -1,9 +1,9 @@
 import FrameworkCfg from "../../../FrameworkCfg";
+import ITResourceLoader from "../../load/loader/ITResourceLoader";
 import BaseMediator from "../base/BaseMediator";
 import BaseScene from "../base/BaseScene";
 import { BaseView } from "../base/BaseView";
 import { OPEN_VIEW_OPTION } from "../Constants";
-import ITResourceLoader from "../../load/loader/ITResourceLoader";
 
 /**
  * mvc框架控制类
@@ -11,17 +11,14 @@ import ITResourceLoader from "../../load/loader/ITResourceLoader";
  * @description 负责控制和维护框架各个节点和结构间的跳转和关联。
  */
 export class ViewManager {
-
     // 实例
     private static _instance: ViewManager = new ViewManager();
-
     /** 上一场景类 */
     private _preSceneMediatorCls: new() => BaseMediator = null;
     private _preSceneViewCls: new() => BaseScene = null;
     /** 当前场景类 */
     private _curSceneMediatorCls: new() => BaseMediator = null;
     private _curSceneViewCls: new() => BaseScene = null;
-
     /** 当前场景 */
     private _curScene: BaseMediator;
     /** 当前显示的pop view列表 */
@@ -147,7 +144,10 @@ export class ViewManager {
     public __showView__(mediator: new() => BaseMediator, view: new() => BaseView,
                         name: string, data?: any, option?: OPEN_VIEW_OPTION, zOrder?: number,
                         cb?: (view: BaseView) => void, parent?: cc.Node, useCache?: boolean): void {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 84033896c4f0384d78090862ec936bca09c141a4
         // 如果使用缓存，则查找是否有缓存，如果有直接使用缓存对象，然后调整层级到最高
         if (useCache) {
             let isUseCache = this.useCache(name);
@@ -159,9 +159,10 @@ export class ViewManager {
                 return;
             }
         }
+        // 对其z轴坐标
+        this.makeIndexAlign();
         // 处理打开UI的其他操作
         this.openViewOptionHandler(option);
-
         // 创建并绑定view
         let viewMediator: BaseMediator = new mediator();
         viewMediator.medName = name;
@@ -182,7 +183,7 @@ export class ViewManager {
         } else {
             ITResourceLoader.loadRes(viewPath, cc.Prefab, (err, prefab) => {
                 if (err) {
-                    it.error(err);
+                    it.error(`打开界面[${name}]时，加载资源[${viewPath}]出错，`);
                     return;
                 }
                 let viewNode = cc.instantiate(prefab);
@@ -238,6 +239,18 @@ export class ViewManager {
     }
 
     /**
+     * 使所有popview的zIndex的值相等，回归默认的层级数值
+     * 这里是为了解决 useCache 方法里将复用的view强制提高了zIndex, 然后pop新的view时层级不正确的问题
+     */
+    private makeIndexAlign(): void {
+        for (let med of this._popViewList) {
+            if (med.view.node.zIndex !== this._maxLayerZorder + 10) {
+                med.view.node.zIndex = this._maxLayerZorder + 10;
+            }
+        }
+    }
+
+    /**
      * 初始化ViewMediator
      * @param {BaseMediator} mediator ViewMediator
      * @param {cc.Node} viewNode view显示节点
@@ -247,7 +260,6 @@ export class ViewManager {
      */
     private initViewMediator(mediator: BaseMediator, viewNode: cc.Node, view: new() => BaseView,
                              option?: OPEN_VIEW_OPTION, zOrder?: number, parent?: cc.Node): void {
-
         mediator.view = viewNode.addComponent(view);
         if (parent) {
             parent.addChild(viewNode);
@@ -255,10 +267,11 @@ export class ViewManager {
             cc.director.getScene().getChildByName("Canvas").addChild(viewNode);
         }
         mediator.view.__init__();
+        mediator.view.__viewActionHandler__((view as any).action());
         // 根据不同打开类型，存储到不同队列中。
         if (option === OPEN_VIEW_OPTION.OVERLAY || option === OPEN_VIEW_OPTION.SINGLE) {
             // 这里处理层级设置：保障popview层级大于layer层级，这里固定大于10.
-            viewNode.zIndex = this._maxLayerZorder + 10;
+            viewNode.zIndex = this._maxLayerZorder + zOrder + 10;
             this._popViewList.push(mediator);
             // 处理显示隐藏
             this.doAppearOrDisappear();
@@ -267,6 +280,38 @@ export class ViewManager {
             this._layerViewList.push(mediator);
             if (zOrder > this._maxLayerZorder) {
                 this._maxLayerZorder = zOrder;
+            }
+        }
+        // 绑定通过装饰器声明的view事件函数
+        this.bindViewEvent(mediator);
+    }
+
+    /** 当popview list中新push进view时，需要做显示和被遮罩处理 */
+    private doAppearOrDisappear(): void {
+        // 如果当前pop list为空 则需要调用场景被遮罩的接口
+        this._curScene.onDisappear();
+        // 在push新view进入最上层之前先调用前一个最上层viewMediator的onDisappear接口
+        if (this.popViewList.length > 0) {
+            let preView = this.popViewList[this.popViewList.length - 1];
+            preView.__onAppear__();
+        }
+        if (this.popViewList.length > 1) {
+            let preView = this.popViewList[this.popViewList.length - 2];
+            preView.__onDisappear__();
+        }
+    }
+
+    /** 绑定通过装饰器声明的view事件函数 */
+    private bindViewEvent(mediator: BaseMediator): void {
+        let map = ((window as any).__ViewEventList__ as Map<string, {key: string, func: string}[]>);
+        // 获取类名
+        let clsName = mediator.constructor.name;
+        let funcList = map.get(clsName);
+        if (funcList) {
+            for (let obj of funcList) {
+                if (mediator[obj.func]) {
+                    mediator.bindEvent(obj.key, mediator[obj.func], mediator);
+                }
             }
         }
     }
@@ -289,13 +334,7 @@ export class ViewManager {
                     let preView = this.popViewList[this.popViewList.length - 1];
                     preView.__onAppear__();
                 }
-                // if (this.popViewList.length <= 0) {
-                //     if (this.layerViewList) {
-                //         for (let layer of this.layerViewList) {
-                //             layer.__onAppear__();
-                //         }
-                //     }
-                // }
+                this.checkPopListSize();
                 return;
             }
         }
@@ -309,6 +348,7 @@ export class ViewManager {
                 return;
             }
         }
+        this.checkPopListSize();
     }
 
     /**
@@ -321,6 +361,16 @@ export class ViewManager {
             popView["__destroy__"]();
         }
         this._popViewList = [];
+        // 当popview都清0时，调用场景被显示接口
+        this.checkPopListSize();
+    }
+
+    /** 检查popview list长度，当popview都清0时，调用场景被显示接口 */
+    private checkPopListSize(): void {
+        // 当popview都清0时，调用场景被显示接口
+        if (this._popViewList.length <= 0) {
+            if (this._curScene) { this._curScene.onAppear(); }
+        }
     }
 
     /**
@@ -378,6 +428,20 @@ export class ViewManager {
         }
     }
 
+    public destroy(): void {
+        /** 上一场景类 */
+        this._preSceneMediatorCls = null;
+        this._preSceneViewCls = null;
+        /** 当前场景类 */
+        this._curSceneMediatorCls = null;
+        this._curSceneViewCls = null;
+        /** 当前场景 */
+        this._curScene = null;
+        /** 当前显示的pop view列表 */
+        this.__closeAllView__();
+        /** 当前场景Layer的最高层级 */
+        this._maxLayerZorder = 0;
+    }
     /**************************** getter and setter ******************************/
     get popViewList(): BaseMediator[] {
         return this._popViewList;

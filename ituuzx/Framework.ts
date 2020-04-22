@@ -2,7 +2,6 @@ import BaseModel from "./core/mvc/base/BaseModel";
 import { Facade } from "./core/mvc/Facade";
 import CommandManager from "./core/mvc/manager/CommandManager";
 import { ViewManager } from "./core/mvc/manager/ViewManager";
-import AudioUtil from "./core/util/AudioUtil";
 import LoadLayersCmd from "./mvc_ex/command/LoadLayersCmd";
 
 /**
@@ -60,7 +59,6 @@ export default class Framework {
     public static getModel<T extends BaseModel>(model: {new (): T}): T {
         return Facade.getInstance().getModel(model);
     }
-
 }
 
 /** 一个者UI层的配置结构 */
@@ -68,6 +66,17 @@ export class MVC_struct {
     public viewClass: string;
     public medClass: string;
     public children: MVC_struct[];
+    public showBanner: boolean = false;
+}
+
+/** 一个场景配置结构对象 */
+export class MVC_scene {
+    public viewClass: string;
+    public medClass: string;
+    public children: MVC_struct[];
+    public model: string[];
+    public showLoading: boolean = false;
+    public showBanner: boolean = false;
 }
 
 /** 一个场景配置结构对象 */

@@ -48,7 +48,7 @@ export default class CommandManager {
             // tslint:disable-next-line: no-string-literal
             cmd["asyncExecute"]();
         } else {
-            mi.log(command.prototype + " 不是可执行的命令！");
+            it.log(command.prototype + " 不是可执行的命令！");
         }
     }
 
@@ -72,7 +72,7 @@ export default class CommandManager {
             // tslint:disable-next-line: no-string-literal
             cmd["asyncUndo"]();
         } else {
-            mi.log(command.prototype + " 不是可执行的命令！");
+            it.log(command.prototype + " 不是可执行的命令！");
         }
     }
 }
