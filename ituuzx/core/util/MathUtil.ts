@@ -235,6 +235,7 @@ export default class MathUtil {
         {
             return false;
         }
+
         let dx = b0.x - a0.x;
         let dy = b0.y - a0.y;
         let inv = 1 / cross;
@@ -244,11 +245,13 @@ export default class MathUtil {
         {
             return false;
         }
+
         let t = (dx * by - dy * bx) * inv;
         if (t < 0 || t > 1)
         {
             return false;
         }
+
         if(p) {
             p.x = a0.x + s * ax;
             p.y = a0.y + t * ay;

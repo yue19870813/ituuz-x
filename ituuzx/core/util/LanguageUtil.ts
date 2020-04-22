@@ -20,14 +20,13 @@ export default class LanguageUtil {
     private static _languageCfg: new () => ConfigBase;
     /** 初始化当前语言 */
     public static init(lan: string, cfg: new () => ConfigBase): void {
-        let localLan = cc.sys.localStorage.getItem("ituuz_language");
+        let localLan = cc.sys.localStorage.getItem("T_language");
         if (localLan && localLan !== "") {
             LanguageUtil.CUR_LAN = localLan;
             LanguageUtil._languageCfg = cfg;
             it.log("local当前语言 ====>>>> ", localLan);
             return;
         }
-        LanguageUtil.CUR_LAN = lan;
         it.log("传入的默认语言是：", lan);
         if (lan === "zh_cn") {
             LanguageUtil.CUR_LAN = LanguageType.ZH_CN;

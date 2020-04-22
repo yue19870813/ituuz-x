@@ -144,10 +144,6 @@ export class ViewManager {
     public __showView__(mediator: new() => BaseMediator, view: new() => BaseView,
                         name: string, data?: any, option?: OPEN_VIEW_OPTION, zOrder?: number,
                         cb?: (view: BaseView) => void, parent?: cc.Node, useCache?: boolean): void {
-<<<<<<< HEAD
-
-=======
->>>>>>> 84033896c4f0384d78090862ec936bca09c141a4
         // 如果使用缓存，则查找是否有缓存，如果有直接使用缓存对象，然后调整层级到最高
         if (useCache) {
             let isUseCache = this.useCache(name);
@@ -176,6 +172,7 @@ export class ViewManager {
             viewNode.width = cc.winSize.width;
             viewNode.height = cc.winSize.height;
             viewNode.name = name;
+            // viewNode.scale = 0;
             viewMediator.init(data);
             this.initViewMediator(viewMediator, viewNode, view, option, zOrder, parent);
             viewMediator.viewDidAppear();
@@ -188,6 +185,7 @@ export class ViewManager {
                 }
                 let viewNode = cc.instantiate(prefab);
                 viewNode.name = name;
+                // viewNode.scale = 0;
                 viewMediator.init(data);
                 this.initViewMediator(viewMediator, viewNode, view, option, zOrder, parent);
                 viewMediator.viewDidAppear();
@@ -219,23 +217,6 @@ export class ViewManager {
             }
         }
         return isExist;
-    }
-
-    private doAppearOrDisappear(): void {
-        // 在push新view进入最上层之前先调用前一个最上层viewMediator的onDisappear接口
-        if (this.popViewList.length > 0) {
-            let preView = this.popViewList[this.popViewList.length - 1];
-            preView.__onAppear__();
-        }
-        if (this.popViewList.length > 1) {
-            let preView = this.popViewList[this.popViewList.length - 2];
-            preView.__onDisappear__();
-        }
-        // if (this.layerViewList) {
-        //     for (let layer of this.layerViewList) {
-        //         layer.__onDisappear__();
-        //     }
-        // }
     }
 
     /**
@@ -442,6 +423,7 @@ export class ViewManager {
         /** 当前场景Layer的最高层级 */
         this._maxLayerZorder = 0;
     }
+
     /**************************** getter and setter ******************************/
     get popViewList(): BaseMediator[] {
         return this._popViewList;

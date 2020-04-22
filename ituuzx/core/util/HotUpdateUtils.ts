@@ -42,7 +42,7 @@ export default class HotUpdateUtils {
         HotUpdateUtils._versionCode = versionCode;
         HotUpdateUtils._searchPath = searchPath;
         // 设置存储目录
-        HotUpdateUtils._storagePath = ((jsb.fileUtils ? jsb.fileUtils.getWritablePath() + searchPath + "/" : searchPath + "/it"));
+        HotUpdateUtils._storagePath = ((jsb.fileUtils ? jsb.fileUtils.getWritablePath() + searchPath + "/" : searchPath + "/fs"));
 
         /** 版本对比接口 */
         let versionCompareHandle = (versionA, versionB) => {
@@ -221,9 +221,6 @@ export default class HotUpdateUtils {
                 HotUpdateUtils._updating = false;
                 HotUpdateUtils._canRetry = true;
                 failed = true;
-                break;
-            case jsb.EventAssetsManager.ERROR_UPDATING:
-                it.log("[hot_update]Asset update error: " + event.getAssetId() + ", " + event.getMessage());
                 break;
             // @ts-ignore
             case jsb.EventAssetsManager.ERROR_UPDATING:

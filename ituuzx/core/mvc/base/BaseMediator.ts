@@ -1,11 +1,11 @@
 import { Facade } from "../Facade";
 import CommandManager from "../manager/CommandManager";
 import NotificationManager from "../manager/NotificationManager";
+import { ViewManager } from "../manager/ViewManager";
 import BaseCommand from "./BaseCommand";
 import BaseModel from "./BaseModel";
 import { BaseView } from "./BaseView";
 import GameContent from "./GameContent";
-import { ViewManager } from "../manager/ViewManager";
 
 /**
  * 视图中介者基类

@@ -12,12 +12,12 @@
  * // 使用如下接口来为sprite设置纹理
  * setSpriteFrame(sprite, "atlasPath1");
  */
-import AtlasManager from "../../core/load/atlas/AtlasManager";
-import ITUIAtlas from "../../core/load/atlas/ITAtlas";
 import { BaseView } from "../../core/mvc/base/BaseView";
-import NotificationManager from "../../core/mvc/manager/NotificationManager";
-import { ViewManager } from "../../core/mvc/manager/ViewManager";
+import ITUIAtlas from "../../core/load/atlas/ITAtlas";
+import AtlasManager from "../../core/load/atlas/AtlasManager";
 import { AdManager } from "../../sdk/ad/AdManager";
+import { ViewManager } from "../../core/mvc/manager/ViewManager";
+import NotificationManager from "../../core/mvc/manager/NotificationManager";
 
 export default class GameView extends BaseView {
     /** 用于获取纹理贴图对象 */
@@ -42,9 +42,9 @@ export default class GameView extends BaseView {
         let atlasList = this.atlasName();
         for (let atlas of atlasList) {
             // 通过AtlasManager加载图集纹理资源，并返回图集引用；
-            let miAtlas = AtlasManager.loadAtlas(atlas);
+            let itAtlas = AtlasManager.loadAtlas(atlas);
             // 将图集引用添加到当前UI对象中，方便使用。
-            this._uiAtlas.addAtlas(atlas, miAtlas);
+            this._uiAtlas.addAtlas(atlas, itAtlas);
         }
     }
 
@@ -111,10 +111,6 @@ export default class GameView extends BaseView {
                 }
             }
         }
-    }
-
-    /** @override */
-    public onClose(): void {
     }
 
     /** @override */

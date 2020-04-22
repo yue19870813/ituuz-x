@@ -39,7 +39,6 @@ export default class GameMediator extends BaseMediator {
         super.__onAppear__();
     }
     public onAppear(): void {
-
     }
 
     /** 从最上层被其他View遮挡变成下层时调用 */
@@ -70,7 +69,7 @@ export default class GameMediator extends BaseMediator {
      * @param {MVC_struct | MVC_scene} sceneCfg 场景配置
      * @param {any} data 传递给下个场景的参数，自定义类型。
      */
-    public gotoScene(sceneCfg: MVC_struct | MVC_scene, data: any = null): void {
+    public runScene(sceneCfg: MVC_struct | MVC_scene, data: any = null): void {
         // 向新建scene传递参数
         this.sendCmd(LoadLayersCmd, {mvc: sceneCfg, data});
     }
@@ -105,22 +104,6 @@ export default class GameMediator extends BaseMediator {
 
     public preloadRes(): PreloadResItem[] {
         return [];
-    }
-
-    /**
-     * // TODO 添加子对象,允许MVC节点持有新的MVC子节点，并当父类MVC销毁时，同时销毁MVC子节点
-     * // TODO MVC对象增加uuid，用于区别和手动设置uuid来自定义复用和刷新逻辑
-     * @param viewCfg {MVC_struct} sceneCfg 场景配置
-     * @param {any} data 传递给新建UI的参数，自定义类型。
-     * @param {cc.Node} parent 父节点对象，可选 
-     */
-    public addItem(viewCfg: MVC_struct, data?: any, parent?: cc.Node): void {
-        if (!parent) {
-            parent = this.view.node;
-        }
-        // 向新建view传递参数
-        // this.sendCmd(LoadPopViewsCmd, {mvc: viewCfg, data, parent, useCache: false});
-        throw Error("not implements.");
     }
 
     public destroy(): void {
