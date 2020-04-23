@@ -4,7 +4,7 @@
  * @example
  *      class Test extends SingleBase {
  *          public test() {
- *              mi.log("我是单例对象");
+ *              it.log("我是单例对象");
  *          }
  *      }
  *      let t = SingleFactory.getInstance(Test);

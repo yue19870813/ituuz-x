@@ -14,7 +14,7 @@ export default class ITUIAtlas {
     /**
      * 添加该UI需要加载的atlas资源
      * @param {string} key 资源key值，默认就是图集的路径。
-     * @param {MiAtlas} atlas 图集对象
+     * @param {ITAtlas} atlas 图集对象
      */
     public addAtlas(key: string, atlas: ITAtlas): void {
         this._atlasMap.set(key, atlas);
