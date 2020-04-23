@@ -17,8 +17,12 @@ ituuz-x是一个cocos creator游戏开发一个集成框架，也是一个工具
 
 # 近期版本内容
 ## v2.2.1新增功能
-> 待补充1
-- 待补充2
+> v2.2.1版本主要是对已有功能的优化和体验提升，以及bug修改。（下期预告：基于mvc框架的新手引导系统正在开发中，同时最重要的是下个版本要完善一下框架的使用文档）
+- [`new`]增加View事件注册装饰器@addviewevent
+- [`new`]进入后台游戏音乐自动控制
+- [`new`][增加单例工厂SingleFactory](./document/utils/SingleFactory.md)
+- [`ts`]优化部分代码结构
+- [`bug`]修改部分接口导出错误
 
 ## v2.1版本功能
 > v2.1版本主要是修复bug，以及对之前的功能进行了优化。相关文档[ituuz-x游戏框架v2.1新特性介绍](http://ituuz.com/2019/11/10/ituuz-x-v2-1特性介绍/)
@@ -56,11 +60,13 @@ ituuz-x是一个cocos creator游戏开发一个集成框架，也是一个工具
     - 寻路
     - 网络数据层模块(http)
 - TODO 
-    - 网络数据层模块（websocket && local）
+    - 新手引导框架
+    - 系统化的完善使用文档
 - NEXT
     - framework工作流（build && culling）
     - 资源自动加载释放
 - BACKUP
+    - 网络数据层模块（websocket && local）
 	- 性能分析支持
     - 自动化测试支持
     - 异常捕获 
