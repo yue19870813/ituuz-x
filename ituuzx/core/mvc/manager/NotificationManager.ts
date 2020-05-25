@@ -50,11 +50,18 @@ export default class NotificationManager {
      * @param {Object} body 消息传递的参数
      */
     private loopMap(list: BaseMediator[], noti: string | number, body?: any): void {
-        // 待优化，根据UI注册和反注册逻辑，暂时没有
-        for (let med of list) {
+        let tempList = [];
+        // 根据UI注册和反注册逻辑
+        for (let i = list.length; i >= 0; i--) {
+            let med = list[i];
             if (med == null || med === undefined) {
                 continue;
             }
+            // 如果存在就说明该mediator已经遍历过了
+            if (tempList.indexOf(med.uuid) >= 0) {
+                continue;
+            }
+            tempList.push(med.uuid);
             try {
                 // tslint:disable-next-line: no-string-literal
                 let notiMap: Map<string | number, {key: string| number, cb: (data: any) => void, target: any}> = med["_notiMap"];

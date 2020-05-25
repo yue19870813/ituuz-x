@@ -89,8 +89,8 @@ export class Facade {
      * @param {cc.Node} parent 父节点
      */
     public addLayer(mediator: new() => BaseMediator, view: new() => BaseView, name: string,
-                    zOrder?: number, data?: any, cb?: (view: BaseView) => void, parent?: cc.Node): void {
-        ViewManager.getInstance().__showView__(mediator, view, name, data, OPEN_VIEW_OPTION.LAYER, zOrder, cb, parent, false);
+        zOrder?: number, data?: any, cb?: (view: BaseView) => void, parent?: cc.Node, uuid?: string): void {
+        ViewManager.getInstance().__showView__(mediator, view, name, data, OPEN_VIEW_OPTION.LAYER, zOrder, cb, parent, false, uuid);
     }
 
     /**
@@ -136,6 +136,18 @@ export class Facade {
                 return layer;
             }
         }
+        return null;
+    }
+
+    /** 根据uuid获取Mediator */
+    public getViewByUUID(uuid: string): BaseMediator {
+        let layerList = ViewManager.getInstance().layerViewList;
+        for (let layer of layerList) {
+            if (layer.uuid === uuid) {
+                return layer;
+            }
+        }
+        return null;
     }
 }
 

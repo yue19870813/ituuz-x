@@ -4,6 +4,7 @@ import BaseMediator from "../base/BaseMediator";
 import BaseScene from "../base/BaseScene";
 import { BaseView } from "../base/BaseView";
 import { OPEN_VIEW_OPTION } from "../Constants";
+import UUID from "../../util/UUID";
 
 /**
  * mvc框架控制类
@@ -66,7 +67,7 @@ export class ViewManager {
         // 保存当前场景
         this._curScene = sceneMediator;
         // tslint:disable-next-line: no-string-literal
-        sceneMediator["__init__"]();
+        sceneMediator["__init__"](UUID.generate());
         sceneMediator.init(data);
 
         if (this._curSceneMediatorCls != null && this._curSceneViewCls != null) {
@@ -143,7 +144,7 @@ export class ViewManager {
      */
     public __showView__(mediator: new() => BaseMediator, view: new() => BaseView,
                         name: string, data?: any, option?: OPEN_VIEW_OPTION, zOrder?: number,
-                        cb?: (view: BaseView) => void, parent?: cc.Node, useCache?: boolean): void {
+                        cb?: (view: BaseView) => void, parent?: cc.Node, useCache?: boolean, uuid?: string): void {
         // 如果使用缓存，则查找是否有缓存，如果有直接使用缓存对象，然后调整层级到最高
         if (useCache) {
             let isUseCache = this.useCache(name);
@@ -162,8 +163,13 @@ export class ViewManager {
         // 创建并绑定view
         let viewMediator: BaseMediator = new mediator();
         viewMediator.medName = name;
-        // tslint:disable-next-line: no-string-literal
-        viewMediator["__init__"]();
+        if (uuid) {
+            // tslint:disable-next-line: no-string-literal
+            viewMediator["__init__"](uuid);
+        } else {
+            // tslint:disable-next-line: no-string-literal
+            viewMediator["__init__"](UUID.generate());
+        }
 
         // 处理场景显示逻辑
         let viewPath: string = (view as any).path();

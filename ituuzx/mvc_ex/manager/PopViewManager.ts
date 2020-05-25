@@ -1,5 +1,6 @@
 import { Facade } from "../../core/mvc/Facade";
 import NotificationManager from "../../core/mvc/manager/NotificationManager";
+import { ViewManager } from "../../core/mvc/manager/ViewManager";
 import JSUtil from "../../core/util/JSUtil";
 import { MVC_struct } from "../../Framework";
 import { AdManager } from "../../sdk/ad/AdManager";
@@ -76,14 +77,19 @@ export default class PopViewManager {
                     if (parent) { view.node.parent = parent; }
                     if (mvcObj.showBanner) {
                         view.isShowBanner = true;
-                        // 打开banner广告
-                        it.log(`Banner Ad: [${mvcObj.viewClass}] open start.`);
-                        AdManager.showBanner(() => {
-                            it.log(`Banner Ad: [${mvcObj.viewClass}] open finished.`);
-                            // 记录banner广告日志
-                            NotificationManager.getInstance().__sendNotification__("__OPEN_BANNER_NOTI__", mvcObj.viewClass);
-                        });
+                        if (PopViewManager.isBannerPlaying()) {
+                            it.log("Banner Ad: banner已经打开了");
+                        } else {
+                            // 打开banner广告
+                            it.log(`Banner Ad: [${mvcObj.medClass}] open start.`);
+                            AdManager.showBanner(() => {
+                                it.log(`Banner Ad: [${mvcObj.medClass}] open finished.`);
+                                // 记录banner广告日志
+                                NotificationManager.getInstance().__sendNotification__("__OPEN_BANNER_NOTI__", mvcObj.medClass);
+                            });
+                        }
                     } else {
+                        it.log(`Banner Ad: [${mvcObj.viewClass}] banner closed.`);
                         AdManager.closeBanner();
                     }
                     // 加载完成后的回调,递归加载childern
@@ -93,5 +99,22 @@ export default class PopViewManager {
                 }, useCache);
             });
         }
+    }
+
+    /** 判断当前banner是否播放中 */
+    public static isBannerPlaying(): boolean {
+        let popList = ViewManager.getInstance().popViewList;
+        if (popList.length > 0) {
+            if ((popList[popList.length - 1].view as GameView).isShowBanner) {
+                return true;
+            }
+        }
+        let curScene = ViewManager.getInstance().curScene;
+        if (curScene && curScene.view) {
+            if ((curScene.view as GameView).isShowBanner) {
+                return true;
+            }
+        }
+        return false;
     }
 }

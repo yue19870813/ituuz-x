@@ -16,11 +16,11 @@ export default class AddLayerItemCmd extends SimpleCommand {
 
     public execute(body?: any): void {
         // 加载完场景开始加载view
-        this.loadViews(body.mvc, body.data, body.parent, body.zOrder);
+        this.loadViews(body.mvc, body.data, body.parent, body.zOrder, body.uuid);
     }
 
     /** 根据配置数据加载view */
-    private loadViews(mvcObj: MVC_struct, data: any,  parentNode: cc.Node, zOrder: number = 0): void {
+    private loadViews(mvcObj: MVC_struct, data: any,  parentNode: cc.Node, zOrder: number = 0, uuid?: string): void {
         if (mvcObj) {
             let viewModule = null;
             JSUtil.importCls(mvcObj.viewClass).then((module) => {
@@ -31,7 +31,7 @@ export default class AddLayerItemCmd extends SimpleCommand {
                     if (mvcObj.showBanner) {
                         view.isShowBanner = true;
                     }
-                }, parentNode);
+                }, parentNode, uuid);
             });
         }
     }

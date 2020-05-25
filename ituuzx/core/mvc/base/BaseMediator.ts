@@ -16,12 +16,12 @@ import GameContent from "./GameContent";
  *      BaseMediator.viewDidAppear
  */
 export default abstract class BaseMediator {
-
+    /** 界面唯一id */
+    private _uuid: string;
+    /** 中介者名称 */
     public medName: any;
-
     /** 当前场景content */
     private _sceneContent: GameContent;
-
     /** 当前中介者持有的view视图 */
     public view: BaseView;
     /** 当前中介者中注册的消息列表 */
@@ -36,9 +36,11 @@ export default abstract class BaseMediator {
 
     /**
      * 内部初始化使用，外部不要调用。
+     * @param {string} uuid 界面唯一id
      * @private
      */
-    private __init__(): void {
+    private __init__(uuid: string): void {
+        this._uuid = uuid;
         let content = ViewManager.getInstance().curScene._sceneContent;
         if (content) {
             this._sceneContent = content;
@@ -140,4 +142,9 @@ export default abstract class BaseMediator {
      * @override
      */
     public abstract destroy(): void;
+
+    /**************************** getter and setter ******************************/
+    public get uuid(): string {
+        return this._uuid;
+    }
 }

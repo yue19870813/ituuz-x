@@ -75,3 +75,7 @@ export class SingleFactory {
         }
     }
 }
+
+// tslint:disable-next-line: no-unused-expression
+(window as any).it || ((window as any).it = {});
+(window as any).it.instance = SingleFactory.getInstance;

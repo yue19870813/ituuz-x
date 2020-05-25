@@ -44,7 +44,7 @@ export default class GameMediator extends BaseMediator {
     /** 从最上层被其他View遮挡变成下层时调用 */
     public __onDisappear__(): void {
         super.__onDisappear__();
-        this.view.__closeBanner__();
+        // this.view.__closeBanner__();
     }
     public onDisappear(): void {
     }
@@ -94,12 +94,12 @@ export default class GameMediator extends BaseMediator {
      * @param {any} data 传递给新建UI的参数，自定义类型。
      * @param {cc.Node} parent 父节点对象，可选 
      */
-    public addLayer(viewCfg: MVC_struct, data?: any, parent?: cc.Node, zOrder?: number): void {
+    public addLayer(viewCfg: MVC_struct, data?: any, parent?: cc.Node, zOrder?: number, uuid?: string): void {
         if (!parent) {
             parent = this.view.node;
         }
         // 向新建view传递参数
-        this.sendCmd(AddLayerItemCmd, {mvc: viewCfg, data, parent, zOrder});
+        this.sendCmd(AddLayerItemCmd, {mvc: viewCfg, data, parent, zOrder, uuid});
     }
 
     public preloadRes(): PreloadResItem[] {
