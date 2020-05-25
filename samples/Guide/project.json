@@ -1,0 +1,9 @@
+{
+  "engine": "cocos2d-html5",
+  "packages": "packages",
+  "version": "2.3.3",
+  "name": "Guide",
+  "uuid": "a2c55b38-b817-4272-b09d-fb9d5e18755d",
+  "id": "b6a99809-8141-45ed-bb99-7ed0765c458c",
+  "isNew": false
+}
