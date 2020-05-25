@@ -93,7 +93,7 @@ export class MVC_struct {
     public viewClass: string;
     public medClass: string;
     public children: MVC_struct[];
-    public showBanner: boolean = false;
+    public showBanner?: boolean;
 }
 
 /** 一个场景配置结构对象 */
@@ -101,9 +101,9 @@ export class MVC_scene {
     public viewClass: string;
     public medClass: string;
     public children: MVC_struct[];
-    public model: string[];
-    public showLoading: boolean = false;
-    public showBanner: boolean = false;
+    public model?: string[];
+    public showLoading?: boolean;
+    public showBanner?: boolean;
 }
 
 // 将接口导出
