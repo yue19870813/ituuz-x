@@ -20,7 +20,7 @@ declare namespace it {
          */
         static start(
             scene: MVC_scene | MVC_struct,
-            models: {new (): BaseModel}[],
+            models?: {new (): BaseModel}[],
             debug?: boolean, 
             designResolution?: cc.Size, 
             fitWidth?: boolean, 

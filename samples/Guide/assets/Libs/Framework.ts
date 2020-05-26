@@ -26,7 +26,7 @@ export default class Framework {
      */
     public static start(
             scene: MVC_struct | MVC_scene,
-            models: {new (): BaseModel}[],
+            models: {new (): BaseModel}[] = null,
             debug: boolean = true, 
             designResolution: cc.Size = cc.size(960, 640), 
             fitWidth: boolean = false, 
